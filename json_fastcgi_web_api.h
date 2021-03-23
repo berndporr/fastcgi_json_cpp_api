@@ -5,15 +5,11 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <fcntl.h>
-#include <sys/ioctl.h>
-#include <linux/types.h>
-#include <linux/spi/spidev.h>
 #include <sys/signal.h>
 #include <sys/stat.h>
 #include <sys/socket.h>
 #include <iostream>
-#include "fcgio.h"
+#include <fcgio.h>
 #include <thread>
 #include <string>
 #include <map>
