@@ -43,7 +43,7 @@ class `JSONGenerator` for this purpose.
 
 ### Implement the POST callback (optional)
 
-This handler receives JSON (in form of a POST payload) from the
+This handler receives the JSON from jQuery (in form of a POST payload) from the
 website for example a button press. Implement the callback:
 
 ```
@@ -51,13 +51,13 @@ website for example a button press. Implement the callback:
 	public:
 		/**
 		 * Receives the data from the web browser in JSON format.
-		 * Use jsonDecoder() to decode the JSON or use an external
+		 * Use postDecoder() to decode the JSON or use an external
 		 * library.
 		 **/
-		virtual void postString(std::string json) = 0;
+		virtual void postString(std::string arg) = 0;
 	};
 ```
-Overload `postJSONString(std::string json)` with a function
+Overload `postString(std::string arg)` with a function
 which decodes the received POST argument.
 You can use `postDecoder(std::string s)` which returns a `std::map` of key/value pairs.
 
