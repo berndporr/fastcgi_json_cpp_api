@@ -12,6 +12,13 @@ apt-get install libfcgi-dev
 
 ## Howto
 
+The only file you need is:
+```
+json_fastcgi_web_api.h
+```
+Copy this into your project and then overload its
+abstract callbacks and you are ready to go.
+
 ### Implement the GET callback
 
 This is the callback which sends JSON to the website:
