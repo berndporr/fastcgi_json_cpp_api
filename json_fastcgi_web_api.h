@@ -49,10 +49,10 @@ public:
 	public:
 		/**
 		 * Receives the data from the web browser in JSON format.
-		 * Use jsonDecoder() to decode the JSON or use an external
+		 * Use postDecoder() to decode the JSON or use an external
 		 * library.
 		 **/
-		virtual void postJSONString(std::string json) = 0;
+		virtual void postString(std::string postArg) = 0;
 	};
 	
 
@@ -125,11 +125,11 @@ public:
 
 public:
 	/**
-	 * Parses a json string and returns a map with value/key pairs.
+	 * Parses a POST string and returns a map with value/key pairs.
 	 * Note this is a simple parser and it won't deal with nested
 	 * structures and won't do any special character decoding.
 	 **/
-	static std::map<std::string,std::string> jsonDecoder(std::string s) {
+	static std::map<std::string,std::string> postDecoder(std::string s) {
 		size_t pos = 0;
 		std::map<std::string,std::string> postMap;
 		while (1) {
@@ -221,7 +221,7 @@ public:
 				FCGX_GetStr(tmp,reqLen,fastCGIHandler->request.in);
 				tmp[reqLen - 1] = 0;
 				if (nullptr != fastCGIHandler->postCallback) {
-					fastCGIHandler->postCallback->postJSONString(tmp);
+					fastCGIHandler->postCallback->postString(tmp);
 				}
 				delete[] tmp;
 				// create the header

@@ -43,8 +43,8 @@ class `JSONGenerator` for this purpose.
 
 ### Implement the POST callback (optional)
 
-This handler receives JSON from the website for example
-a button press. Implement the callback:
+This handler receives JSON (in form of a POST payload) from the
+website for example a button press. Implement the callback:
 
 ```
 	class POSTCallback {
@@ -54,11 +54,12 @@ a button press. Implement the callback:
 		 * Use jsonDecoder() to decode the JSON or use an external
 		 * library.
 		 **/
-		virtual void postJSONString(std::string json) = 0;
+		virtual void postString(std::string json) = 0;
 	};
 ```
 Overload `postJSONString(std::string json)` with a function
-which decodes the received JSON. You can use `jsonDecoder(std::string s)` which returns a `std::map` of key/value pairs.
+which decodes the received POST argument.
+You can use `postDecoder(std::string s)` which returns a `std::map` of key/value pairs.
 
 ### Start the communication
 
