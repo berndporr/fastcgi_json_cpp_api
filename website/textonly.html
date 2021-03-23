@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+    <head>
+	<title>Welcome to the Realtime Embedded Test server</title>
+	<style>
+	 body {
+             width: 35em;
+             margin: 0 auto;
+             font-family: Tahoma, Verdana, Arial, sans-serif;
+	 }
+	</style>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    </head>
+    <body>
+      <h2>Temperature plot with JSON data transfer</h2>
+
+      <h3><span id="temperature">00</span> degree celsius</h3>
+
+	<p>This is a realtime demo where the java script requests the data
+	  and shows it on the screen.</p>
+	
+	<script type="text/javascript">
+	  // callback when the Web page has been loaded
+	  $(document).ready(function() {
+	      window.intervalId = setInterval(function() {
+		  // callback for interval timer for every second
+		  $.getJSON("/data/:80",function(result){
+		      var utcSeconds = result.epoch;
+		      var d = new Date(0);
+		      var temperature = Math.round(result.temperature * 100)/100.0;
+		      d.setUTCSeconds(utcSeconds);
+                      document.getElementById("temperature").innerHTML = temperature;
+		  });
+	      }, 1000);
+	  });
+	</script>
+	
+	
+	<br />
+	<br />
+<br />
+<br />
+<br />
+<br />
+<p><a href="/">Main page</a></p>
+<br />
+<br />
+<br />
+<br />
+
+<h2>References</h2>
+
+      <p><a href="http://dygraphs.com/">dygraphs</p>
+
+      <p><a href="https://github.com/berndporr/rpi_AD7705_daq">github repo</a></p>
+
+    </body>
+</html>

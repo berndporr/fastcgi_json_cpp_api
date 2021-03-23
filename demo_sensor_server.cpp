@@ -1,8 +1,4 @@
 /*
- * AD7705 test/demo program for the Raspberry PI
- *
- * Copyright (c) 2007  MontaVista Software, Inc.
- * Copyright (c) 2007  Anton Vorontsov <avorontsov@ru.mvista.com>
  * Copyright (c) 2013-2021  Bernd Porr <mail@berndporr.me.uk>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -11,10 +7,10 @@
  *
  */
 
-#include "AD7705Comm.h"
+#include <string.h>
+
 #include "json_fastcgi_web_api.h"
-
-
+#include "fakesensor.h"
 
 /**
  * Flag to indicate that we are running.
@@ -59,7 +55,7 @@ void setHUPHandler() {
  * in a real application the data would be stored
  * in a database and/or triggers events and other things!
  **/
-class AD7705fastcgicallback : public AD7705callback {
+class SENSORfastcgicallback : public SensorCallback {
 public:
 	float currentTemperature;
 	float forcedTemperature;
@@ -75,7 +71,7 @@ public:
 	 **/
 	virtual void hasSample(int v) {
 		// crude conversion to temperature
-		currentTemperature = (float)v / 65536 * 2.5 * 0.6 * 100;
+		currentTemperature = v;
 		if (forcedCounter > 0) {
 			forcedCounter--;
 			currentTemperature = forcedTemperature;
@@ -105,15 +101,15 @@ private:
 	 * that would be probably a database class or a
 	 * controller keeping it all together.
 	 **/
-	AD7705fastcgicallback* ad7705fastcgi;
+	SENSORfastcgicallback* sensorfastcgi;
 
 public:
 	/**
 	 * Constructor: argument is the ADC callback handler
 	 * which keeps the data as a simple example.
 	 **/
-	JSONCGIADCCallback(AD7705fastcgicallback* argAD7705fastcgi) {
-		ad7705fastcgi = argAD7705fastcgi;
+	JSONCGIADCCallback(SENSORfastcgicallback* argSENSORfastcgi) {
+		sensorfastcgi = argSENSORfastcgi;
 	}
 
 	/**
@@ -124,7 +120,7 @@ public:
 	virtual std::string getJSONString() {
 		JSONCGIHandler::JSONGenerator jsonGenerator;
 		jsonGenerator.add("epoch",(long)time(NULL));
-		jsonGenerator.add("temperature",ad7705fastcgi->currentTemperature);
+		jsonGenerator.add("temperature",sensorfastcgi->currentTemperature);
 		return jsonGenerator.getJSON();
 	}
 };
@@ -133,10 +129,10 @@ public:
 /**
  * Callback handler which receives the JSON from jquery
  **/
-class AD7705POSTCallback : public JSONCGIHandler::POSTCallback {
+class SENSORPOSTCallback : public JSONCGIHandler::POSTCallback {
 public:
-	AD7705POSTCallback(AD7705fastcgicallback* argAD7705fastcgi) {
-		ad7705fastcgi = argAD7705fastcgi;
+	SENSORPOSTCallback(SENSORfastcgicallback* argSENSORfastcgi) {
+		sensorfastcgi = argSENSORfastcgi;
 	}
 
 	/**
@@ -147,29 +143,29 @@ public:
 		auto m = JSONCGIHandler::jsonDecoder(json);
 		float temp = atof(m["temperature"].c_str());
 		int steps = atoi(m["steps"].c_str());
-		ad7705fastcgi->forceTemperature(temp,steps);
+		sensorfastcgi->forceTemperature(temp,steps);
 	}
 
 	/**
 	 * Pointer to the handler which keeps the temperature
 	 **/
-	AD7705fastcgicallback* ad7705fastcgi;
+	SENSORfastcgicallback* sensorfastcgi;
 };
 	
 
 // Main program
 int main(int argc, char *argv[]) {
 	// getting all the ADC related acquistion set up
-	AD7705Comm* ad7705comm = new AD7705Comm();
-	AD7705fastcgicallback ad7705fastcgicallback;
-	ad7705comm->setCallback(&ad7705fastcgicallback);
+	FakeSensor* sensorcomm = new FakeSensor();
+	SENSORfastcgicallback sensorfastcgicallback;
+	sensorcomm->setCallback(&sensorfastcgicallback);
 
 	// Setting up the JSONCGI communication
 	// The callback which is called when fastCGI needs data
-	// gets a pointer to the AD7705 callback class which
+	// gets a pointer to the SENSOR callback class which
 	// contains the samples. Remember this is just a simple
 	// example to have access to some data.
-	JSONCGIADCCallback fastCGIADCCallback(&ad7705fastcgicallback);
+	JSONCGIADCCallback fastCGIADCCallback(&sensorfastcgicallback);
 
 	// Callback handler for data which arrives from the the
 	// browser via jquery json post requests:
@@ -180,7 +176,7 @@ int main(int argc, char *argv[]) {
 	//		  steps: 100
 	//	      }
 	//	  );
-	AD7705POSTCallback postCallback(&ad7705fastcgicallback);
+	SENSORPOSTCallback postCallback(&sensorfastcgicallback);
 	
 	// starting the fastCGI handler with the callback and the
 	// socket for nginx.
@@ -189,7 +185,7 @@ int main(int argc, char *argv[]) {
 							    &postCallback);
 
 	// starting the data acquisition at the given sampling rate
-	ad7705comm->start(AD7705Comm::SAMPLING_RATE_50HZ);
+	sensorcomm->startSensor();
 
 	// catching Ctrl-C or kill -HUP so that we can terminate properly
 	setHUPHandler();
@@ -204,7 +200,7 @@ int main(int argc, char *argv[]) {
 	fprintf(stderr,"'%s' shutting down.\n",argv[0]);
 
 	// stopping ADC
-	delete ad7705comm;
+	delete sensorcomm;
 
 	// stops the fast CGI handlder
 	delete fastCGIHandler;
