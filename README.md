@@ -48,12 +48,26 @@ a button press. Implement the callback:
 Overload `postJSONString(std::string json)` with a funcion
 which decodes the received JSON. You can use `jsonDecoder(std::string s)` which returns a `std::map` of key/value pairs.
 
-### Start communcation
+### Start the communcation
 
 The constructor takes as arguments the GET callback, the
 path to the fastCGI socket and the POST callback. As
 soon as the constructor is instantiated the communication
 starts.
+
+```
+       /**
+         * Constructor which inits it and starts the main thread.
+         * Provide an instance of the callback handler which provides the
+         * payload data in return. The optional socketpath variable
+         * can be set to another path for the socket which talks to the
+         * webserver. postCallback is the callback which returns
+         * received json packets as a map.
+         **/
+        JSONCGIHandler(GETCallback* argGetCallback,
+                       const char socketpath[] = "/tmp/fastcgisocket",
+                       POSTCallback* argPostCallback = nullptr);
+```
 
 ### Stop the communication
 
