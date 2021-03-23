@@ -1,0 +1,8 @@
+cmake_minimum_required(VERSION 2.8.9)
+project (ad7705_test)
+add_executable(ad7705_test ad7705_test.cpp gpio-sysfs.cpp AD7705Comm.cpp)
+add_executable(ad7705_json ad7705_json.cpp gpio-sysfs.cpp AD7705Comm.cpp)
+set (CMAKE_CXX_STANDARD 11)
+find_package (Threads)
+TARGET_LINK_LIBRARIES(ad7705_test rt ${CMAKE_THREAD_LIBS_INIT})
+TARGET_LINK_LIBRARIES(ad7705_json rt fcgi++ fcgi ${CMAKE_THREAD_LIBS_INIT})
