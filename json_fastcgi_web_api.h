@@ -63,7 +63,7 @@ public:
 	class JSONGenerator {
 	public:
 		/**
-		 * Adds a JSON entry
+		 * Adds a JSON entry: string
 		 **/
 		void add(std::string key, std::string value) {
 			if (!firstEntry) {
@@ -74,6 +74,9 @@ public:
 			firstEntry = 0;
 		}
 
+		/**
+		 * Adds a JSON entry: double
+		 **/
 		void add(std::string key, double value) {
 			if (!firstEntry) {
 				json = json + ", ";
@@ -83,10 +86,16 @@ public:
 			firstEntry = 0;
 		}
 
+		/**
+		 * Adds a JSON entry: float
+		 **/
 		void add(std::string key, float value) {
 			add(key, (double)value);
 		}
 
+		/**
+		 * Adds a JSON entry: long int
+		 **/
 		void add(std::string key, long value) {
 			if (!firstEntry) {
 				json = json + ", ";
@@ -96,12 +105,15 @@ public:
 			firstEntry = 0;
 		}
 
+		/**
+		 * Adds a JSON entry: int
+		 **/
 		void add(std::string key, int value) {
 			add(key, (long)value);
 		}
 
 		/**
-		 * Gets the json
+		 * Gets the json string
 		 **/
 		std::string getJSON() { return json + "}"; }
 		
@@ -112,6 +124,11 @@ public:
 
 
 public:
+	/**
+	 * Parses a json string and returns a map with value/key pairs.
+	 * Note this is a simple parser and it won't deal with nested
+	 * structures and won't do any special character decoding.
+	 **/
 	static std::map<std::string,std::string> jsonDecoder(std::string s) {
 		size_t pos = 0;
 		std::map<std::string,std::string> postMap;
