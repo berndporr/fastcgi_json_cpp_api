@@ -181,8 +181,8 @@ int main(int argc, char *argv[]) {
 	// starting the fastCGI handler with the callback and the
 	// socket for nginx.
 	JSONCGIHandler* fastCGIHandler = new JSONCGIHandler(&fastCGIADCCallback,
-							    "/tmp/adc7705socket",
-							    &postCallback);
+							    &postCallback,
+							    "/tmp/adc7705socket");
 
 	// starting the data acquisition at the given sampling rate
 	sensorcomm->startSensor();

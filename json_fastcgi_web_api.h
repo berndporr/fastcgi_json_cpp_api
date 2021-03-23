@@ -162,8 +162,8 @@ public:
 	 * received json packets as a map.
 	 **/
 	JSONCGIHandler(GETCallback* argGetCallback,
-		       const char socketpath[] = "/tmp/fastcgisocket",
-		       POSTCallback* argPostCallback = nullptr) {
+		       POSTCallback* argPostCallback = nullptr,
+		       const char socketpath[] = "/tmp/fastcgisocket") {
 		getCallback = argGetCallback;
 		postCallback = argPostCallback;
 		// set it to zero
