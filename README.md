@@ -1,6 +1,11 @@
-# json_fastcgi_web_api
+# JSON fastcgi web API
 
-Header-only JSON event driven communication between jQuery in browser and C++ via nginx
+Header-only JSON event driven communication between jQuery in browser and C++ via nginx.
+
+This was developed because of a lack of a very lightweight jQuery to C++
+communication. This is a small header based helper which can be easily
+included in any C++ application which needs to talk to a web page
+where realtime data needs to be exchanged.
 
 ![alt tag](dataflow.png)
 
