@@ -213,7 +213,7 @@ public:
 				FCGX_Finish_r(&(fastCGIHandler->request));
 			}
 			if (strcmp(method, "POST") == 0) {
-				long reqLen = 0;
+				long reqLen = 1;
 				char * content_length_str = FCGX_GetParam("CONTENT_LENGTH",
 									  fastCGIHandler->request.envp);
 				if (content_length_str) reqLen = atol(content_length_str)+1;
