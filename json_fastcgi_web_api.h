@@ -16,27 +16,33 @@
 #include <curl/curl.h>
 
 /**
- * C++ wrapper around the fastCGI 
- * which sends JSON and receives JSON.
+ * C++ wrapper around fastCGI which sends and receives JSON
+ * in a jQuery friendly format.
+ *
+ * Copyright (C) 2021  Bernd Porr <mail@berndporr.me.uk>
+ * Apache License 2.0
  **/
 class JSONCGIHandler {
 public:
 	/**
 	 * GET callback handler which needs to be implemented by the main
 	 * program.
-	 * This needs to provide the JSON data payload either by using
-	 * the simple JSONGenerator below or an external library.
+	 * This needs to provide the JSON payload as a string either by using
+	 * the simple JSONGenerator below or by an external library.
 	 **/
 	class GETCallback {
 	public:
 		/**
 		 * Needs to return the payload data sent to the web browser.
-		 * Use the JSON generator class or an external json generator.
+		 * Use the JSONGenerator to create the JSON or use an 
+		 * external json generator.
+		 * \return JSON data
 		 **/
 		virtual std::string getJSONString() = 0;
 		/**
-		 * The content type of the payload. That's by default it's
+		 * The content type of the payload. That's by default
 		 * "application/json" but can be overloaded if needed.
+		 * \return MIME type
 		 **/
 		virtual std::string getContentType() { return "application/json"; }
 	};
@@ -49,9 +55,9 @@ public:
 	class POSTCallback {
 	public:
 		/**
-		 * Receives the data from the web browser in JSON format.
-		 * Use postDecoder() to decode the JSON or use an external
-		 * library.
+		 * Receives the POST data from the web browser.
+		 * Use postDecoder() to decode the postArg string.
+		 * \param postArg POST data received from jQuery
 		 **/
 		virtual void postString(std::string postArg) = 0;
 	};
@@ -65,6 +71,8 @@ public:
 	public:
 		/**
 		 * Adds a JSON entry: string
+		 * \param key The JSON key
+		 * \param value The JSON value as a string
 		 **/
 		void add(std::string key, std::string value) {
 			if (!firstEntry) {
@@ -77,6 +85,8 @@ public:
 
 		/**
 		 * Adds a JSON entry: double
+		 * \param key The JSON key
+		 * \param value The JSON value as a double
 		 **/
 		void add(std::string key, double value) {
 			if (!firstEntry) {
@@ -89,6 +99,8 @@ public:
 
 		/**
 		 * Adds a JSON entry: float
+		 * \param key The JSON key
+		 * \param value The JSON value as a float
 		 **/
 		void add(std::string key, float value) {
 			add(key, (double)value);
@@ -96,6 +108,8 @@ public:
 
 		/**
 		 * Adds a JSON entry: long int
+		 * \param key The JSON key
+		 * \param value The JSON value as a long int
 		 **/
 		void add(std::string key, long value) {
 			if (!firstEntry) {
@@ -108,6 +122,8 @@ public:
 
 		/**
 		 * Adds a JSON entry: int
+		 * \param key The JSON key
+		 * \param value The JSON value as an int
 		 **/
 		void add(std::string key, int value) {
 			add(key, (long)value);
@@ -115,6 +131,7 @@ public:
 
 		/**
 		 * Gets the json string
+		 * \return The JSON data ready to be sent
 		 **/
 		std::string getJSON() { return json + "}"; }
 		
@@ -126,9 +143,13 @@ public:
 
 public:
 	/**
-	 * Parses a POST string and returns a map with value/key pairs.
+	 * Parses a POST string and returns a std::map with key/value pairs.
+	 * It also converts back any %xx style encoding back to chars using
+	 * libcurl.
 	 * Note this is a simple parser and it won't deal with nested
 	 * JSON structures.
+	 * \param s The POST string to be decoded.
+	 * \return A std::map which conains the key/value pairs.
 	 **/
 	static std::map<std::string,std::string> postDecoder(std::string s) {
 		std::map<std::string,std::string> postMap;
@@ -168,12 +189,15 @@ public:
 
 	
 	/**
-	 * Constructor which inits it and starts the main thread.
-	 * Provide an instance of the callback handler which provides the
-	 * payload data in return. The optional socketpath variable
+	 * Constructor which opens the connection and starts the main thread.
+	 * Provide an instance of the callback handler which returns the
+	 * payload data. argPostCallback is the callback which returns
+	 * received json packets as a map. The optional socketpath variable
 	 * can be set to another path for the socket which talks to the
-	 * webserver. postCallback is the callback which returns
-	 * received json packets as a map.
+	 * webserver.
+	 * \param argGetCallback Callback handler for sending JSON
+	 * \param argPostCallback Callback handler for receiving JSON
+	 * \param socketpath Path of the socket which communicates to the webserver
 	 **/
 	JSONCGIHandler(GETCallback* argGetCallback,
 		       POSTCallback* argPostCallback = nullptr,
@@ -199,8 +223,8 @@ public:
 	}
 
 	/**
-	 * Destructor which shuts down the connection to the webserver 
-	 * and it also terminates the thread waiting for requests.
+	 * Destructor which shuts down the connection to the webserver and
+	 * it also terminates the thread which is waiting for requests.
 	 **/
 	~JSONCGIHandler() {
 		running = 0;
