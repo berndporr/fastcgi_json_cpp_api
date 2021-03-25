@@ -101,7 +101,7 @@ in the background with:
 ```
 nohup ./demo_sensor_server &
 ```
-which creates a socket under `\tmp\adc7705socket` to communicate with
+which creates a socket under `/tmp/adc7705socket` to communicate with
 the fastcgi server.
 
 ### Configuring the nginx for FastCGI
@@ -111,6 +111,11 @@ the fastcgi server.
  2. copy `website/index.html` to `/var/www/html`.
  
 Then point your web-browser to your webserver. You should see a fake
-temperatue reading on the screen and a plot with dygraph.
+temperatue reading on the screen and a plot with dygraph. The JSON
+packets can be viewed by appending `/sensor/` to the server URL.
+
+The script sends also a JSON packet to the demo server which
+requests to clamp the temperature to 20C and prints out a string
+to stderr.
 
 ![alt tag](screenshot.png)
