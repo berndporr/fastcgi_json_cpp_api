@@ -13,6 +13,7 @@
 #include <thread>
 #include <string>
 #include <map>
+#include <curl/curl.h>
 
 /**
  * C++ wrapper around the fastCGI 
@@ -144,7 +145,18 @@ public:
 			if (pos2 != std::string::npos) {
 				std::string key = token.substr(0,pos2);
 				std::string value = token.substr(pos2+1,token.length());
-				postMap[key] = value;
+				CURL *curl = curl_easy_init();
+				if (NULL != curl) {
+					char* valueDecoded = curl_easy_unescape( curl, value.c_str(), value.length(), nullptr );
+					if (NULL != valueDecoded) {
+						for(int i = 0; i < value.length(); i++) {
+							if (valueDecoded[i] == '+') valueDecoded[i] = ' ';
+						}
+						postMap[key] = valueDecoded;
+						curl_free(valueDecoded);
+					}
+					curl_easy_cleanup(curl);
+				}
 			}
 			if (pos == std::string::npos) break;
 			s.erase(0, pos + 1);

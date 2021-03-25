@@ -13,6 +13,7 @@ where realtime data needs to be exchanged.
 
 ```
 apt-get install libfcgi-dev
+apt-get install libcurl4-openssl-dev
 ```
 
 ## Howto
@@ -101,16 +102,16 @@ in the background with:
 ```
 nohup ./demo_sensor_server &
 ```
-which creates a socket under `\tmp\adc7705socket` to communicate with
+which creates a socket under `/tmp/sensorsocket` to communicate with
 the fastcgi server.
 
 ### Configuring the nginx for FastCGI
 
  1. copy the the nginx config file `website/nginx-sites-enabled-default` to your
     nginx config directory `/etc/nginx/sites-enabled/default`.
- 2. copy `website/index.html` to `/var/www/html`.
+ 2. copy `website/fakesensor.html` to `/var/www/html`.
  
-Then point your web-browser to your webserver. You should see a fake
+Then point your web-browser to `fakesensor.html` on your website. You should see a fake
 temperatue reading on the screen and a plot with dygraph.
 
 ![alt tag](screenshot.png)
