@@ -3,7 +3,7 @@
 C++ Header-only event driven communication between jQuery in a web-browser via nginx.
 
 This was developed because of a lack of a lightweight jQuery to C++
-communication. This is a small helper which can easily be
+communication. It's a small helper which can easily be
 included in any C++ application which needs to talk to a web page
 where realtime data needs to be exchanged.
 
@@ -21,8 +21,8 @@ The only file you need is:
 ```
 json_fastcgi_web_api.h
 ```
-Copy this into your project and then overload its
-abstract callbacks and you are ready to go.
+Copy this header file into your project, include it and then overload the
+abstract callbacks in the class.
 
 ### Implement the GET callback
 
@@ -39,11 +39,13 @@ This is the callback which sends JSON to the website:
 	};
 ```
 Overload `getJSONString()` and return JSON. You can use the
-class `JSONGenerator` for this purpose.
+class `JSONGenerator` to generate the JSON data: Use the `add`
+methods to add key/value pairs and then get the json with the
+method `getJSON()`.
 
 ### Implement the POST callback (optional)
 
-This handler receives the JSON from jQuery (in form of a POST payload) from the
+This handler receives the JSON from jQuery POST command from the
 website for example a button press. Implement the callback:
 
 ```
@@ -58,15 +60,15 @@ website for example a button press. Implement the callback:
 	};
 ```
 Overload `postString(std::string arg)` with a function
-which decodes the received POST argument.
-You can use `postDecoder(std::string s)` which returns a `std::map` of key/value pairs.
+which decodes the received POST data.
+You can use `postDecoder(std::string s)` which returns a
+`std::map` of key/value pairs.
 
 ### Start the communication
 
-The constructor takes as arguments the GET callback, the
-path to the fastCGI socket and the POST callback. As
-soon as the constructor is instantiated the communication
-starts.
+The constructor takes as arguments the GET callback, the POST callback
+and the path to the fastCGI socket. As soon as the constructor is
+instantiated the communication starts.
 
 ```
        /**
@@ -99,7 +101,7 @@ in the background with:
 ```
 nohup ./demo_sensor_server &
 ```
-which creates a socket under `\tmp\adc7705socket` to communicates with
+which creates a socket under `\tmp\adc7705socket` to communicate with
 the fastcgi server.
 
 ### Configuring the nginx for FastCGI
