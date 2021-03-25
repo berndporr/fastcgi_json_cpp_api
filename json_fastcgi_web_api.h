@@ -128,11 +128,16 @@ public:
 	/**
 	 * Parses a POST string and returns a map with value/key pairs.
 	 * Note this is a simple parser and it won't deal with nested
-	 * structures and won't do any special character decoding.
+	 * JSON structures.
 	 **/
 	static std::map<std::string,std::string> postDecoder(std::string s) {
-		size_t pos = 0;
 		std::map<std::string,std::string> postMap;
+		CURL *curl = curl_easy_init();
+		if (NULL == curl) {
+			std::cerr << "Could not init curl.\n";
+			return postMap;
+		}
+		size_t pos = 0;
 		while (1) {
 			std::string token;
 			pos = s.find("&");
@@ -145,22 +150,19 @@ public:
 			if (pos2 != std::string::npos) {
 				std::string key = token.substr(0,pos2);
 				std::string value = token.substr(pos2+1,token.length());
-				CURL *curl = curl_easy_init();
-				if (NULL != curl) {
-					char* valueDecoded = curl_easy_unescape( curl, value.c_str(), value.length(), nullptr );
-					if (NULL != valueDecoded) {
-						for(int i = 0; i < value.length(); i++) {
-							if (valueDecoded[i] == '+') valueDecoded[i] = ' ';
-						}
-						postMap[key] = valueDecoded;
-						curl_free(valueDecoded);
+				char* valueDecoded = curl_easy_unescape( curl, value.c_str(), value.length(), NULL );
+				if (NULL != valueDecoded) {
+					for(int i = 0; i < strlen(valueDecoded); i++) {
+						if (valueDecoded[i] == '+') valueDecoded[i] = ' ';
 					}
-					curl_easy_cleanup(curl);
+					postMap[key] = valueDecoded;
+					curl_free(valueDecoded);
 				}
 			}
 			if (pos == std::string::npos) break;
 			s.erase(0, pos + 1);
 		}
+		curl_easy_cleanup(curl);
 		return postMap;
 	}
 
@@ -178,6 +180,10 @@ public:
 		       const char socketpath[] = "/tmp/fastcgisocket") {
 		getCallback = argGetCallback;
 		postCallback = argPostCallback;
+		int r = curl_global_init(CURL_GLOBAL_NOTHING);
+		if (r) {
+			std::cerr << "Curl init error: " << r << "\n";
+		}
 		// set it to zero
 		memset(&request, 0, sizeof(FCGX_Request));
 		// init the connection
