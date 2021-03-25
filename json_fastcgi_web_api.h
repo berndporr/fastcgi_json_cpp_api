@@ -28,7 +28,7 @@ public:
 	 * GET callback handler which needs to be implemented by the main
 	 * program.
 	 * This needs to provide the JSON payload as a string either by using
-	 * the simple JSONGenerator below or by an external library.
+	 * the simple JSONGenerator or by an external library.
 	 **/
 	class GETCallback {
 	public:
