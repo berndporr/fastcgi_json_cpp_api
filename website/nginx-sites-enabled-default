@@ -8,12 +8,12 @@ server {
           log_not_found  off;
         } 
 
-        location /data/ {
+        location /sensor/ {
           include        fastcgi_params;
-          fastcgi_pass   unix:/tmp/adc7705socket;
+          fastcgi_pass   unix:/tmp/sensorsocket;
         }
 
-	location / {
+        location / {
 	  root /var/www/html;
           index index.html;
         }

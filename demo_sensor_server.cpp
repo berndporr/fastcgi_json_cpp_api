@@ -143,6 +143,7 @@ public:
 		auto m = JSONCGIHandler::postDecoder(postArg);
 		float temp = atof(m["temperature"].c_str());
 		int steps = atoi(m["steps"].c_str());
+		std::cerr << m["hello"] << "\n";
 		sensorfastcgi->forceTemperature(temp,steps);
 	}
 
@@ -182,7 +183,7 @@ int main(int argc, char *argv[]) {
 	// socket for nginx.
 	JSONCGIHandler* fastCGIHandler = new JSONCGIHandler(&fastCGIADCCallback,
 							    &postCallback,
-							    "/tmp/adc7705socket");
+							    "/tmp/sensorsocket");
 
 	// starting the data acquisition at the given sampling rate
 	sensorcomm->startSensor();

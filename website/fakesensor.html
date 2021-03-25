@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-	<title>Realtime data plot with JSON data transfer</title>
+	<title>Welcome to the Realtime Embedded Test server</title>
 	<style>
 	 body {
              width: 35em;
@@ -24,7 +24,12 @@
 	<div id="div_g" style="width:600px; height:300px;"></div>
 	
 	<script type="text/javascript">
+	  // max samples for dygraph
 	  var maxSamples = 60;
+
+	  // relative path to the sensor data for get/post:
+	  var serverPath = "/sensor/:80";
+	  
 	  // callback when the Web page has been loaded
 	  $(document).ready(function() {
 	      var data = [];
@@ -36,10 +41,11 @@
 
 	      $("#driver").click(function(event){
 		  $.post( 
-                      "/data/:80",
+                      serverPath,
                       {
 			  temperature: 20,
-			  steps: 100
+			  steps: 5,
+			  hello: "Hello, that's a test!"
 		      }
 		  );
 		  
@@ -47,7 +53,7 @@
 	      
 	      window.intervalId = setInterval(function() {
 		  // callback for interval timer for every second
-		  $.getJSON("/data/:80",function(result){
+		  $.getJSON(serverPath,function(result){
 		      // callback after the php script has been called
 		      var utcSeconds = result.epoch;
 		      var d = new Date(0);
@@ -73,5 +79,30 @@
 <input type = "button" id = "driver" value = "Force constant 20C" />
 <br />
 <br />
-</body>
+<p><a href="/">Main page</a></p>
+<br />
+<br />
+<br />
+<br />
+
+<h2>References</h2>
+
+<p><a href="http://dygraphs.com/">dygraphs</p>
+
+<p><a href="https://github.com/berndporr/rpi_AD7705_daq">github repo</a></p>
+
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+
+<p><a href="textonly.html">Text only version</a></p>
+	
+    </body>
 </html>
