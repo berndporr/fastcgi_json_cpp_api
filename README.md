@@ -25,6 +25,9 @@ json_fastcgi_web_api.h
 Copy this header file into your project, include it and then overload the
 abstract callbacks in the class.
 
+The file `json_fastcgi_web_api.h` is well documented itself. Its doxygen generated
+documentation is here: https://berndporr.github.io/json_fastcgi_web_api/
+
 ### Implement the GET callback
 
 This is the callback which sends JSON to the website:
