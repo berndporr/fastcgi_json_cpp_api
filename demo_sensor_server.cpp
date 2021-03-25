@@ -127,7 +127,7 @@ public:
 
 
 /**
- * Callback handler which receives the JSON from jquery
+ * Callback handler which receives the JSON from jQuery
  **/
 class SENSORPOSTCallback : public JSONCGIHandler::POSTCallback {
 public:
@@ -174,7 +174,8 @@ int main(int argc, char *argv[]) {
         //              "/data/:80",
         //              {
 	//		  temperature: 20,
-	//		  steps: 100
+	//		  steps: 100,
+	//                hello: "Hello, that's a test!"
 	//	      }
 	//	  );
 	SENSORPOSTCallback postCallback(&sensorfastcgicallback);
@@ -195,7 +196,8 @@ int main(int argc, char *argv[]) {
 
 	// Just do nothing here and sleep. It's all dealt with in threads!
 	// At this point for example a GUI could be started such as QT
-	// Here, we just wait till the user presses ctrl-c.
+	// Here, we just wait till the user presses ctrl-c which then
+	// sets mainRunning to zero.
 	while (mainRunning) sleep(1);
 
 	fprintf(stderr,"'%s' shutting down.\n",argv[0]);
