@@ -12,6 +12,7 @@
 #include <fcgio.h>
 #include <thread>
 #include <string>
+#include <deque>
 #include <map>
 #include <curl/curl.h>
 
@@ -94,6 +95,29 @@ public:
 			}
 			json = json + "\"" + key + "\":";
 			json = json + std::to_string(value);
+			firstEntry = 0;
+		}
+
+		/**
+		 * Adds a JSON entry: 
+		 * \param key The JSON key
+		 * \param value The JSON value as a double
+		 **/
+		template <class T>
+		void add(std::string key, std::deque<T> values) {
+			if (!firstEntry) {
+				json = json + ", ";
+			}
+			json = json + "\"" + key + "\":";
+			json = json + "[";
+			for(auto it = values.begin(); it != values.end(); ++it) {
+				if (it == values.begin()) {
+					json = json + std::to_string(*it);
+				} else {
+					json = json + "," + std::to_string(*it);
+				}
+			}
+			json = json + "]";
 			firstEntry = 0;
 		}
 

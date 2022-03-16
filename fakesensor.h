@@ -48,7 +48,7 @@ public:
 	 * callback is called with new samples
 	 **/
 	void startSensor() {
-		start(250000000);
+		start(1000000000);
 	}
 
 	/**

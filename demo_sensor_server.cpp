@@ -57,10 +57,10 @@ void setHUPHandler() {
  **/
 class SENSORfastcgicallback : public SensorCallback {
 public:
-	float currentTemperature;
-	float forcedTemperature;
-	int forcedCounter = 0;
+	std::deque<float> temperatureBuffer;
+	std::deque<long> timeBuffer;
 	long t;
+	const int maxBufSize = 10;
 
 	/**
 	 * Callback with the fresh ADC data.
@@ -70,19 +70,18 @@ public:
 	 * and store it in a variable.
 	 **/
 	virtual void hasSample(int v) {
-		// crude conversion to temperature
-		currentTemperature = v;
-		if (forcedCounter > 0) {
-			forcedCounter--;
-			currentTemperature = forcedTemperature;
-		}
+		temperatureBuffer.push_back(v);
+		if (temperatureBuffer.size() > maxBufSize) temperatureBuffer.pop_front();
 		// timestamp
 		t = time(NULL);
+		timeBuffer.push_back(t);
+		if (timeBuffer.size() > maxBufSize) timeBuffer.pop_front();
 	}
 
-	void forceTemperature(float temp, int nSteps) {
-		forcedTemperature = temp;
-		forcedCounter = nSteps;
+	void forceTemperature(float temp) {
+		for(auto& v:temperatureBuffer) {
+			v = temp;
+		}
 	}
 };
 
@@ -120,7 +119,8 @@ public:
 	virtual std::string getJSONString() {
 		JSONCGIHandler::JSONGenerator jsonGenerator;
 		jsonGenerator.add("epoch",(long)time(NULL));
-		jsonGenerator.add("temperature",sensorfastcgi->currentTemperature);
+		jsonGenerator.add("temperature",sensorfastcgi->temperatureBuffer);
+		jsonGenerator.add("time",sensorfastcgi->timeBuffer);
 		return jsonGenerator.getJSON();
 	}
 };
@@ -142,9 +142,8 @@ public:
 	virtual void postString(std::string postArg) {
 		auto m = JSONCGIHandler::postDecoder(postArg);
 		float temp = atof(m["temperature"].c_str());
-		int steps = atoi(m["steps"].c_str());
 		std::cerr << m["hello"] << "\n";
-		sensorfastcgi->forceTemperature(temp,steps);
+		sensorfastcgi->forceTemperature(temp);
 	}
 
 	/**
@@ -171,10 +170,10 @@ int main(int argc, char *argv[]) {
 	// Callback handler for data which arrives from the the
 	// browser via jquery json post requests:
 	// $.post( 
-        //              "/data/:80",
+        //              "/sensor/:80",
         //              {
-	//		  temperature: 20,
-	//		  steps: 100,
+	//		  temperature: [20,18,19,20],
+	//                time: [171717,171718,171719,171720],
 	//                hello: "Hello, that's a test!"
 	//	      }
 	//	  );

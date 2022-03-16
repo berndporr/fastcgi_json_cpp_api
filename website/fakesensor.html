@@ -54,17 +54,16 @@
 	      window.intervalId = setInterval(function() {
 		  // callback for interval timer for every second
 		  $.getJSON(serverPath,function(result){
-		      // callback after the php script has been called
-		      var utcSeconds = result.epoch;
-		      var d = new Date(0);
-		      d.setUTCSeconds(utcSeconds);
-		      var x = d;
-		      var y = result.temperature;
+                      data = [];
+		      y = result.temperature[0];
                       document.getElementById("temperature").innerHTML = Math.round(y * 100) / 100;
-		      if (data.length > maxSamples) {
-			  data.shift();
+                      for(let i = 0; i < result.time.length; i++) {
+			  var utcSeconds = result.time[i];
+			  var d = new Date(0);
+			  d.setUTCSeconds(utcSeconds);
+			  var y = result.temperature[i];
+			  data.push([d, y]);
 		      }
-		      data.push([x, y]);
 		      g.updateOptions( { 'file': data } );
 		  });
 	      }, 1000);
