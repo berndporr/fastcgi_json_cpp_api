@@ -8,6 +8,7 @@
  */
 
 #include <string.h>
+#include <unistd.h>
 
 #include "json_fastcgi_web_api.h"
 #include "fakesensor.h"
@@ -60,7 +61,7 @@ public:
 	std::deque<float> temperatureBuffer;
 	std::deque<long> timeBuffer;
 	long t;
-	const int maxBufSize = 10;
+	const int maxBufSize = 50;
 
 	/**
 	 * Callback with the fresh ADC data.
@@ -73,7 +74,7 @@ public:
 		temperatureBuffer.push_back(v);
 		if (temperatureBuffer.size() > maxBufSize) temperatureBuffer.pop_front();
 		// timestamp
-		t = time(NULL);
+		t = getTimeMS();
 		timeBuffer.push_back(t);
 		if (timeBuffer.size() > maxBufSize) timeBuffer.pop_front();
 	}
@@ -83,6 +84,14 @@ public:
 			v = temp;
 		}
 	}
+
+private:
+	static unsigned long getTimeMS() {
+                std::chrono::time_point<std::chrono::system_clock> now = 
+                        std::chrono::system_clock::now();
+                auto duration = now.time_since_epoch();
+                return (unsigned long)std::chrono::duration_cast<std::chrono::milliseconds>(duration).count();
+        }
 };
 
 

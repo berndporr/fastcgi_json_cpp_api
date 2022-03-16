@@ -58,9 +58,8 @@
 		      y = result.temperature[0];
                       document.getElementById("temperature").innerHTML = Math.round(y * 100) / 100;
                       for(let i = 0; i < result.time.length; i++) {
-			  var utcSeconds = result.time[i];
-			  var d = new Date(0);
-			  d.setUTCSeconds(utcSeconds);
+			  const d = new Date();
+			  d.setUTCSeconds(result.time[i]/1000,result.time[i]%1000);
 			  var y = result.temperature[i];
 			  data.push([d, y]);
 		      }
