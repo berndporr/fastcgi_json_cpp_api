@@ -16,22 +16,28 @@ apt-get install libfcgi-dev
 apt-get install libcurl4-openssl-dev
 ```
 
+## Installation
+
+This is a pure header based libary. All the code is in `json_fastcgi_web_api.h`. Just type:
+```
+sudo make install json_fastcgi_web_api.h
+```
+to install the header in the system-wide include dir.
+
 ## Howto
 
 The only file you need is:
 ```
 json_fastcgi_web_api.h
 ```
-Copy this header file into your project, include it and then overload the
-abstract callbacks in the class.
 
 The file `json_fastcgi_web_api.h` has extensive inline documentation. 
 Its doxygen generated online documentation is here: 
 https://berndporr.github.io/json_fastcgi_web_api/
 
-### Implement the GET callback
+### Implement the GET callback (server -> client)
 
-This is the callback which sends JSON to the website:
+This is the callback which sends JSON packets to the client (website, phone app, etc):
 
 ```
 	class GETCallback {
@@ -48,10 +54,10 @@ class `JSONGenerator` to generate the JSON data: Use the `add`
 methods to add key/value pairs and then get the json with the
 method `getJSON()`.
 
-### Implement the POST callback (optional)
+### Implement the POST callback (client -> server, optional)
 
 This handler receives the JSON from jQuery POST command from the
-website for example a button press. Implement the callback:
+website for example when the user presses a button. Implement the callback:
 
 ```
 	class POSTCallback {
@@ -66,8 +72,11 @@ website for example a button press. Implement the callback:
 ```
 Overload `postString(std::string arg)` with a function
 which decodes the received POST data.
-You can use `postDecoder(std::string s)` which returns a
-`std::map` of key/value pairs.
+Use:
+```
+postDecoder(std::string s)
+```
+which returns a `std::map` of key/value pairs.
 
 ### Start the communication
 
@@ -96,8 +105,9 @@ This is done by deleting the instance.
 
 ## Example code
 
-The `demo_sensor_server` fakes a temperature sensor
-and this is plotted on the screen. The nginx
+### Fake sensor demo
+The subdir `fake_sensor_demo` contains a `demo_sensor_server` which fakes a temperature sensor
+and its readings are plotted in a web brower. The nginx
 config file and the website are in the `website`
 directory.
 

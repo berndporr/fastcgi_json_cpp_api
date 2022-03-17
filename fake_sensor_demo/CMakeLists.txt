@@ -1,0 +1,6 @@
+cmake_minimum_required(VERSION 3.1.0)
+project (fake_sensor_demo)
+add_executable(demo_sensor_server demo_sensor_server.cpp CppTimer.cpp)
+set (CMAKE_CXX_STANDARD 11)
+find_package (Threads)
+TARGET_LINK_LIBRARIES(demo_sensor_server json-fastcgi rt ${CMAKE_THREAD_LIBS_INIT})
