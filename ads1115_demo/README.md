@@ -1,5 +1,7 @@
 # ADS1115 ADC demo
 
+![alt tag](screenshot.png)
+
 ## Running the fast CGI server
 The fast cgi server `ads1115_server` creates a socket under
 `/tmp/sensorsocket` to communicate with nginx.
@@ -28,4 +30,3 @@ The script sends also a JSON packet to the demo server which
 requests to clamp the ADC value to 1 and prints out a string
 to stderr.
 
-![alt tag](screenshot.png)
