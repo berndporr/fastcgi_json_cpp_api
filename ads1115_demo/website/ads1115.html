@@ -36,16 +36,15 @@
 	      var g = new Dygraph(document.getElementById("div_g"), data,
 				  {
 				      drawPoints: true,
-				      labels: ['Time', 'Temperature'],
+				      labels: ['Time', 'Volt'],
 				  });
 
 	      $("#driver").click(function(event){
 		  $.post( 
                       serverPath,
                       {
-			  temperature: 20,
-			  steps: 5,
-			  hello: "Hello, that's a test!"
+			  volt: 20,
+			  hello: "Sending over 20V!"
 		      }
 		  );
 		  
@@ -60,7 +59,7 @@
                       document.getElementById("fs").innerHTML = result.fs;
                       for(let i = 0; i < result.values.length; i++) {
 			  var y = result.values[i];
-			  data.push([d, y]);
+			  data.push([t, y]);
 			  t = t + dt;
 		      }
 		      g.updateOptions( { 'file': data } );
@@ -74,7 +73,7 @@
 	<br />
 <br />
 <br />
-<input type = "button" id = "driver" value = "Force constant 20C" />
+<input type = "button" id = "driver" value = "Force 20V" />
 <br />
 <br />
 <p><a href="/">Main page</a></p>
