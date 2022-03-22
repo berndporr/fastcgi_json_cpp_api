@@ -2,6 +2,14 @@
 
 ![alt tag](screenshot.png)
 
+This is a demo with the real ADC ADS1115 which displays
+channel 1 at a sampling rate of 8Hz on a website.
+
+## Prerequisites
+
+Install the ADS1115 class from here:
+https://github.com/berndporr/rpi_ads1115
+
 ## Running the fast CGI server
 The fast cgi server `ads1115_server` creates a socket under
 `/tmp/sensorsocket` to communicate with nginx.
