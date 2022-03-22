@@ -111,13 +111,9 @@ and its readings are plotted in a web brower. The nginx
 config file and the website are in the `website`
 directory.
 
-Start `demo_sensor_server`
-in the background with:
-```
-nohup ./demo_sensor_server &
-```
-which creates a socket under `/tmp/sensorsocket` to communicate with
-the fastcgi server.
+### Real ADC realtime demo
+The subdir `ads1115_demo` contains a demo where the channel one from a real ADS1115 ADC chip is
+plotted in a web browser. You need an ADS1115 ADC for this demo.
 
 ### Configuring the nginx for FastCGI
 
