@@ -18,15 +18,13 @@
 
       <h3>fs = <span id="fs">00</span> Hz</h3>
 
-	<p>This is a realtime demo where the java script requests the data
-	  and then appends it to the plot every second.</p>
+	<p>This is a realtime demo where the java script requests a
+          shift buffer with the most recent ADC values and 
+          plots them every second.</p>
 	
 	<div id="div_g" style="width:600px; height:300px;"></div>
 	
 	<script type="text/javascript">
-	  // max samples for dygraph
-	  var maxSamples = 60;
-
 	  // relative path to the sensor data for get/post:
 	  var serverPath = "/sensor/:80";
 	  
