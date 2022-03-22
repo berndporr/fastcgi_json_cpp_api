@@ -20,7 +20,7 @@
  * C++ wrapper around fastCGI which sends and receives JSON
  * in a jQuery friendly format.
  *
- * Copyright (C) 2021  Bernd Porr <mail@berndporr.me.uk>
+ * Copyright (C) 2021-2022  Bernd Porr <mail@berndporr.me.uk>
  * Apache License 2.0
  **/
 class JSONCGIHandler {
