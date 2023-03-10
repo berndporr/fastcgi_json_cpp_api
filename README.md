@@ -123,3 +123,8 @@ with a USB-DUX and then plotted in a web browser. You need an USB-DUX (sigma or 
 ## Credit
 
 Bernd Porr, mail@berndporr.me.uk
+
+## Dynamic DNS
+if you (like me) have no static IP address you can use this amazing dynamic DNS service:
+[Free DNS](http://freedns.afraid.org/)
+
