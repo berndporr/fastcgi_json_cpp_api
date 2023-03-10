@@ -18,7 +18,7 @@ apt-get install libcurl4-openssl-dev
 
 ## Installation
 
-This is a pure header based libary. All the code is in `json_fastcgi_web_api.h`. Just type:
+This is a pure header based library. All the code is in `json_fastcgi_web_api.h`. Just type:
 ```
 sudo make install json_fastcgi_web_api.h
 ```
@@ -107,7 +107,7 @@ This is done by deleting the instance.
 
 ### Fake sensor demo
 The subdir `fake_sensor_demo` contains a `demo_sensor_server` which fakes a temperature sensor
-and its readings are plotted in a web brower. The nginx
+and its readings are plotted in a web browser. The nginx
 config file and the website are in the `website`
 directory.
 
