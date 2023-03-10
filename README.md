@@ -111,9 +111,13 @@ and its readings are plotted in a web browser. The nginx
 config file and the website are in the `website`
 directory.
 
-### Real ADC realtime demo
+### Real ADC ADS1115 realtime demo
 The subdir `ads1115_demo` contains a demo where the channel one from a real ADS1115 ADC chip is
 plotted in a web browser. You need an ADS1115 ADC for this demo.
+
+### Real USB-DUX realtime demo
+The subdir `usbdux_demo` contains a demo where the temperature from an LM35 is digitised
+with a USB-DUX and then plotted in a web browser. You need an USB-DUX (sigma or D) for this demo.
 
 
 ## Credit
