@@ -1,0 +1,7 @@
+cmake_minimum_required(VERSION 3.1.0)
+project (usbdux_sensor_demo)
+include_directories(..)
+add_executable(usbdux_server usbdux_server.cpp)
+set (CMAKE_CXX_STANDARD 11)
+find_package (Threads)
+TARGET_LINK_LIBRARIES(usbdux_server comedi fcgi curl rt ${CMAKE_THREAD_LIBS_INIT})
