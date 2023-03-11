@@ -10,7 +10,7 @@
 
 #include <string.h>
 #include <unistd.h>
-#include <json/json.h>
+#include <jsoncpp/json/json.h>
 
 #include "json_fastcgi_web_api.h"
 #include "cpp-usbdux.h"
