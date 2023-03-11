@@ -13,7 +13,7 @@
 
 #include "json_fastcgi_web_api.h"
 #include "ads1115rpi.h"
-#include <jsoncpp/json/json.h>
+#include <json/json.h>
 
 /**
  * Flag to indicate that we are running.
