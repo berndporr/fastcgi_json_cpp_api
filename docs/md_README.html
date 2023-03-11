@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.9.1"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>json_fastcgi_web_api: jQuery &lt;--&gt; C++ fastcgi web API</title>
+<title>json_fastcgi_web_api: jQuery &lt;--&gt; C++ fastcgi API</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -62,19 +62,20 @@ $(function() {
 </div><!-- top -->
 <div class="PageDoc"><div class="header">
   <div class="headertitle">
-<div class="title">jQuery &lt;--&gt; C++ fastcgi web API </div>  </div>
+<div class="title">jQuery &lt;--&gt; C++ fastcgi API </div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><p>C++ Header-only event driven communication between jQuery in a web-browser via nginx.</p>
+<div class="textblock"><p>C++ Header-only event driven communication between jQuery in a web-browser via nginx. This can for example implement a RESTful API.</p>
 <p>This was developed because of a lack of a lightweight jQuery to C++ communication. It's a small helper which can easily be included in any C++ application which needs to talk to a web page where realtime data needs to be exchanged.</p>
 <p><img src="dataflow.png" alt="alt tag" class="inline"/></p>
 <h1><a class="anchor" id="autotoc_md1"></a>
 Prerequisites</h1>
 <div class="fragment"><div class="line">apt-get install libfcgi-dev</div>
 <div class="line">apt-get install libcurl4-openssl-dev</div>
+<div class="line">apt-get install libjsoncpp-dev</div>
 </div><!-- fragment --><h1><a class="anchor" id="autotoc_md2"></a>
 Installation</h1>
-<p>This is a pure header based libary. All the code is in <code><a class="el" href="json__fastcgi__web__api_8h_source.html">json_fastcgi_web_api.h</a></code>. Just type: </p><div class="fragment"><div class="line">sudo make install json_fastcgi_web_api.h</div>
+<p>This is a pure header based library. All the code is in <code><a class="el" href="json__fastcgi__web__api_8h_source.html">json_fastcgi_web_api.h</a></code>. Just type: </p><div class="fragment"><div class="line">sudo make install json_fastcgi_web_api.h</div>
 </div><!-- fragment --><p> to install the header in the system-wide include dir.</p>
 <h1><a class="anchor" id="autotoc_md3"></a>
 Howto</h1>
@@ -91,7 +92,7 @@ Implement the GET callback (server -&gt; client)</h2>
 <div class="line">         **/</div>
 <div class="line">        virtual std::string getJSONString() = 0;</div>
 <div class="line">};</div>
-</div><!-- fragment --><p> Overload <code>getJSONString()</code> and return JSON. You can use the class <code>JSONGenerator</code> to generate the JSON data: Use the <code>add</code> methods to add key/value pairs and then get the json with the method <code>getJSON()</code>.</p>
+</div><!-- fragment --><p> Overload <code>getJSONString()</code> and return JSON. The recommended way of generating JSON is with the <a href="https://github.com/open-source-parsers/jsoncpp">jsoncpp</a> library which is part of all major Linux distros.</p>
 <h2><a class="anchor" id="autotoc_md5"></a>
 Implement the POST callback (client -&gt; server, optional)</h2>
 <p>This handler receives the JSON from jQuery POST command from the website for example when the user presses a button. Implement the callback:</p>
@@ -127,23 +128,24 @@ Stop the communication</h2>
 Example code</h1>
 <h2><a class="anchor" id="autotoc_md9"></a>
 Fake sensor demo</h2>
-<p>The subdir <code>fake_sensor_demo</code> contains a <code>demo_sensor_server</code> which fakes a temperature sensor and its readings are plotted in a web brower. The nginx config file and the website are in the <code>website</code> directory.</p>
-<p>Start <code>demo_sensor_server</code> in the background with: </p><div class="fragment"><div class="line">nohup ./demo_sensor_server &amp;</div>
-</div><!-- fragment --><p> which creates a socket under <code>/tmp/sensorsocket</code> to communicate with the fastcgi server.</p>
+<p>The subdir <code>fake_sensor_demo</code> contains a <code>demo_sensor_server</code> which fakes a temperature sensor and its readings are plotted in a web browser. The nginx config file and the website are in the <code>website</code> directory.</p>
 <h2><a class="anchor" id="autotoc_md10"></a>
-Configuring the nginx for FastCGI</h2>
-<ol type="1">
-<li>copy the the nginx config file <code>website/nginx-sites-enabled-default</code> to your nginx config directory <code>/etc/nginx/sites-enabled/default</code>.</li>
-<li>copy <code>website/fakesensor.html</code> to <code>/var/www/html</code>.</li>
-</ol>
-<p>Then point your web-browser to <code>fakesensor.html</code> on your website. You should see a fake temperatue reading on the screen and a plot with dygraph. The JSON packets can be viewed by appending <code>/sensor/</code> to the server URL.</p>
-<p>The script sends also a JSON packet to the demo server which requests to clamp the temperature to 20C and prints out a string to stderr.</p>
-<p><img src="screenshot.png" alt="alt tag" class="inline"/> </p>
+Real ADC ADS1115 realtime demo</h2>
+<p>The subdir <code>ads1115_demo</code> contains a demo where the channel one from a real ADS1115 ADC chip is plotted in a web browser. You need an ADS1115 ADC for this demo.</p>
+<h2><a class="anchor" id="autotoc_md11"></a>
+Real USB-DUX realtime demo</h2>
+<p>The subdir <code>usbdux_demo</code> contains a demo where the temperature from an LM35 is digitised with a <a href="https://github.com/glasgowneuro/usbdux">USB-DUX</a> and then plotted in a web browser. You need an USB-DUX (sigma or D) for this demo.</p>
+<h1><a class="anchor" id="autotoc_md12"></a>
+Credit</h1>
+<p>Bernd Porr, <a href="#" onclick="location.href='mai'+'lto:'+'mai'+'l@'+'ber'+'nd'+'por'+'r.'+'me.'+'uk'; return false;">mail@<span style="display: none;">.nosp@m.</span>bern<span style="display: none;">.nosp@m.</span>dporr<span style="display: none;">.nosp@m.</span>.me.<span style="display: none;">.nosp@m.</span>uk</a></p>
+<h1><a class="anchor" id="autotoc_md13"></a>
+Dynamic DNS</h1>
+<p>if you have no static IP address you can use the the "afraid" dynamic DNS service: <a href="http://freedns.afraid.org/">Free DNS</a> </p>
 </div></div><!-- contents -->
 </div><!-- PageDoc -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu Mar 17 2022 13:13:03 for json_fastcgi_web_api by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1
+Generated on Sat Mar 11 2023 20:50:33 for json_fastcgi_web_api by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1
 </small></address>
 </body>
 </html>
