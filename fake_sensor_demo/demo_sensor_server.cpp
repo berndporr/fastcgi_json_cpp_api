@@ -63,6 +63,7 @@ public:
 	std::deque<long> timeBuffer;
 	long t;
 	const int maxBufSize = 50;
+	float lastValue = 0;
 
 	/**
 	 * Callback with the fresh ADC data.
@@ -71,7 +72,8 @@ public:
 	 * convert the raw ADC data to temperature
 	 * and store it in a variable.
 	 **/
-	virtual void hasSample(int v) {
+	virtual void hasSample(float v) {
+		lastValue = v;
 		temperatureBuffer.push_back(v);
 		if (temperatureBuffer.size() > maxBufSize) temperatureBuffer.pop_front();
 		// timestamp
@@ -129,6 +131,7 @@ public:
 	virtual std::string getJSONString() {
         Json::Value root;
         root["epoch"] = (long)time(NULL);
+	root["lastvalue"] = sensorfastcgi->lastValue;
         Json::Value temperature;
         for(int i = 0; i < sensorfastcgi->temperatureBuffer.size(); i++) {
         	temperature[i] = sensorfastcgi->temperatureBuffer[i];
@@ -192,6 +195,7 @@ int main(int argc, char *argv[]) {
 	// $.post( 
         //              "/sensor/:80",
         //              {
+	//                lastvalue: 20,
 	//		  temperature: [20,18,19,20],
 	//                time: [171717,171718,171719,171720],
 	//                hello: "Hello, that's a test!"

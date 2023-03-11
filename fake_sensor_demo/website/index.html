@@ -16,7 +16,7 @@
     <body>
       <h2>Realtime data plot with JSON data transfer</h2>
 
-      <h3><span id="temperature">00</span> degree celsius</h3>
+      <h3>Value = <span id="temperature">00</span></h3>
 
 	<p>This is a realtime demo where the java script requests the data
 	  and then appends it to the plot every second.</p>
@@ -55,7 +55,7 @@
 		  // callback for interval timer for every second
 		  $.getJSON(serverPath,function(result){
                       data = [];
-		      y = result.temperature[0];
+		      y = result.lastvalue;
                       document.getElementById("temperature").innerHTML = Math.round(y * 100) / 100;
                       for(let i = 0; i < result.time.length; i++) {
 			  const d = new Date();
@@ -74,7 +74,7 @@
 	<br />
 <br />
 <br />
-<input type = "button" id = "driver" value = "Force constant 20C" />
+<input type = "button" id = "driver" value = "Force value of 20" />
 <br />
 <br />
 <p><a href="/">Main page</a></p>
@@ -86,19 +86,5 @@
 <h2>References</h2>
 
 <p><a href="http://dygraphs.com/">dygraphs</p>
-
-<br />
-<br />
-<br />
-<br />
-<br />
-<br />
-<br />
-<br />
-<br />
-<br />
-
-<p><a href="textonly.html">Text only version</a></p>
-	
-    </body>
+</body>
 </html>

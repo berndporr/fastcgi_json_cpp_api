@@ -18,7 +18,7 @@ public:
 	/**
 	 * Called after a sample has arrived.
 	 **/
-	virtual void hasSample(int sample) = 0;
+	virtual void hasSample(float sample) = 0;
 };
 
 

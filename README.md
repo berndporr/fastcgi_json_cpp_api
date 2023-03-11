@@ -1,6 +1,7 @@
-# jQuery <--> C++ fastcgi web API
+# jQuery <--> C++ fastcgi API
 
 C++ Header-only event driven communication between jQuery in a web-browser via nginx.
+This can for example implement a RESTful API.
 
 This was developed because of a lack of a lightweight jQuery to C++
 communication. It's a small helper which can easily be
@@ -14,6 +15,7 @@ where realtime data needs to be exchanged.
 ```
 apt-get install libfcgi-dev
 apt-get install libcurl4-openssl-dev
+apt-get install libjsoncpp-dev
 ```
 
 ## Installation
@@ -49,10 +51,9 @@ This is the callback which sends JSON packets to the client (website, phone app,
 		virtual std::string getJSONString() = 0;
 	};
 ```
-Overload `getJSONString()` and return JSON. You can use the
-class `JSONGenerator` to generate the JSON data: Use the `add`
-methods to add key/value pairs and then get the json with the
-method `getJSON()`.
+Overload `getJSONString()` and return JSON. The recommended way
+of generating JSON is with the [jsoncpp](https://github.com/open-source-parsers/jsoncpp)
+library which is part of all major Linux distros.
 
 ### Implement the POST callback (client -> server, optional)
 
@@ -117,7 +118,8 @@ plotted in a web browser. You need an ADS1115 ADC for this demo.
 
 ### Real USB-DUX realtime demo
 The subdir `usbdux_demo` contains a demo where the temperature from an LM35 is digitised
-with a USB-DUX and then plotted in a web browser. You need an USB-DUX (sigma or D) for this demo.
+with a [USB-DUX](https://github.com/glasgowneuro/usbdux) and then plotted in a web browser.
+You need an USB-DUX (sigma or D) for this demo.
 
 
 ## Credit
@@ -125,6 +127,5 @@ with a USB-DUX and then plotted in a web browser. You need an USB-DUX (sigma or 
 Bernd Porr, mail@berndporr.me.uk
 
 ## Dynamic DNS
-if you (like me) have no static IP address you can use this amazing dynamic DNS service:
+if you have no static IP address you can use the the "afraid" dynamic DNS service:
 [Free DNS](http://freedns.afraid.org/)
-
