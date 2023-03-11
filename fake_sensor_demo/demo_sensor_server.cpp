@@ -130,12 +130,15 @@ public:
         Json::Value root;
         root["epoch"] = (long)time(NULL);
         Json::Value temperature;
-		Json::Value t;
         for(int i = 0; i < sensorfastcgi->temperatureBuffer.size(); i++) {
         	temperature[i] = sensorfastcgi->temperatureBuffer[i];
-			t[i] = sensorfastcgi->timeBuffer[i];
     	}
         root["temperature"]  = temperature;
+		Json::Value t;
+        for(int i = 0; i < sensorfastcgi->timeBuffer.size(); i++) {
+			t[i] = sensorfastcgi->timeBuffer[i];
+    	}
+		root["time"] = t;
         Json::StreamWriterBuilder builder;
     	const std::string json_file = Json::writeString(builder, root);
         return json_file;
