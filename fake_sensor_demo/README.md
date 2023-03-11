@@ -18,7 +18,7 @@ The fast cgi server `demo_sensor_server` creates a socket under
 
  1. copy the the nginx config file `website/nginx-sites-enabled-default` to your
     nginx config directory `/etc/nginx/sites-enabled/default`.
- 2. copy `website/fakesensor.html` to `/var/www/html`.
+ 2. copy `website/index.html` to `/var/www/html`.
  
 Then point your web-browser to `fakesensor.html` on your website.
 You should see a fake temperatue reading on the screen and a plot with dygraph.
