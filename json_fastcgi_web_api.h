@@ -142,7 +142,7 @@ public:
 		// init requests so that we can accept requests
 		FCGX_InitRequest(&request, sock_fd, 0);
 		// starting main loop
-		mainThread = new std::thread(JSONCGIHandler::exec, this);
+		mainThread = std::thread(&JSONCGIHandler::exec, this);
 	}
 
 	/**
@@ -152,41 +152,40 @@ public:
 	~JSONCGIHandler() {
 		running = 0;
 		shutdown(sock_fd, SHUT_RDWR);
-		mainThread->join();
-		delete mainThread;
+		mainThread.join();
 		FCGX_Free(&request, sock_fd);
 	}
 
  private:
-	static void exec(JSONCGIHandler* fastCGIHandler) {
-		while ((fastCGIHandler->running) && (FCGX_Accept_r(&(fastCGIHandler->request)) == 0)) {
-			char * method = FCGX_GetParam("REQUEST_METHOD", fastCGIHandler->request.envp);
+	void exec() {
+		while ((running) && (FCGX_Accept_r(&(request)) == 0)) {
+			char * method = FCGX_GetParam("REQUEST_METHOD", request.envp);
 			if (method == nullptr) {
 				fprintf(stderr,"Please add 'include fastcgi_params;' to the nginx conf.\n");
 				throw "JSONCGI parameters missing.\n";
 			}
 			if (strcmp(method, "GET") == 0) {
 				// create the header
-				std::string buffer = "Content-type: "+fastCGIHandler->getCallback->getContentType();
+				std::string buffer = "Content-type: "+getCallback->getContentType();
 				buffer = buffer + "; charset=utf-8\r\n";
 				buffer = buffer + "\r\n";
 				// append the data
-				buffer = buffer + fastCGIHandler->getCallback->getJSONString();
+				buffer = buffer + getCallback->getJSONString();
 				buffer = buffer + "\r\n";
 				// send the data to the web server
-				FCGX_PutStr(buffer.c_str(), buffer.length(), fastCGIHandler->request.out);
-				FCGX_Finish_r(&(fastCGIHandler->request));
+				FCGX_PutStr(buffer.c_str(), buffer.length(), request.out);
+				FCGX_Finish_r(&(request));
 			}
 			if (strcmp(method, "POST") == 0) {
 				long reqLen = 1;
 				char * content_length_str = FCGX_GetParam("CONTENT_LENGTH",
-									  fastCGIHandler->request.envp);
+									  request.envp);
 				if (content_length_str) reqLen = atol(content_length_str)+1;
 				char* tmp = new char[reqLen];
-				FCGX_GetStr(tmp,reqLen,fastCGIHandler->request.in);
+				FCGX_GetStr(tmp,reqLen,request.in);
 				tmp[reqLen - 1] = 0;
-				if (nullptr != fastCGIHandler->postCallback) {
-					fastCGIHandler->postCallback->postString(tmp);
+				if (nullptr != postCallback) {
+					postCallback->postString(tmp);
 				}
 				delete[] tmp;
 				// create the header
@@ -197,8 +196,8 @@ public:
 				buffer = buffer + "\r\n";
 				buffer = buffer + "<html></html>\r\n";
 				// send the data to the web server
-				FCGX_PutStr(buffer.c_str(), buffer.length(), fastCGIHandler->request.out);
-				FCGX_Finish_r(&(fastCGIHandler->request));
+				FCGX_PutStr(buffer.c_str(), buffer.length(), request.out);
+				FCGX_Finish_r(&request);
 			}
 		}
 	}
@@ -207,7 +206,7 @@ public:
 	FCGX_Request request;
 	int sock_fd = 0;
 	int running = 1;
-	std::thread* mainThread = nullptr;
+	std::thread mainThread;
 	GETCallback* getCallback = nullptr;
 	POSTCallback* postCallback = nullptr;
 };
