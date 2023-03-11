@@ -10,6 +10,7 @@
 
 #include <string.h>
 #include <unistd.h>
+#include <json/json.h>
 
 #include "json_fastcgi_web_api.h"
 #include "cpp-usbdux.h"
@@ -107,11 +108,17 @@ public:
 	 * Gets the data sends it to the webserver -> client.
 	 **/
 	virtual std::string getJSONString() {
-		JSONCGIHandler::JSONGenerator jsonGenerator;
-		jsonGenerator.add("epoch",(long)time(NULL));
-		jsonGenerator.add("values",datasink->values);
-		jsonGenerator.add("fs",datasink->fs);
-		return jsonGenerator.getJSON();
+		Json::Value root;
+		root["epoch"] = (long)time(NULL);
+		Json::Value values;
+		for(int i = 0; i < datasink->values.size(); i++) {
+			values[i] = datasink->values[i];
+		}
+		root["values"]  = values;
+		root["fs"] = datasink->fs;
+		Json::StreamWriterBuilder builder;
+  		const std::string json_file = Json::writeString(builder, root);
+		return json_file;
 	}
 };
 

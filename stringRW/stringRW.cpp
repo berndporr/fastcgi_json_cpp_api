@@ -2,10 +2,12 @@
 #include <iostream>
 
 void jwrite() {
-	Json::Value root;
+  Json::Value root;
   Json::Value data;
+  for(int i=0;i<10;i++) {
+	  data[i] = i*7;
+  }
   root["action"] = "run";
-  data["number"] = 1;
   root["data"] = data;
 
   Json::StreamWriterBuilder builder;
