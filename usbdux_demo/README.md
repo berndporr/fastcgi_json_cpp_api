@@ -1,6 +1,6 @@
 # USBDUX ADC demo with LM35 temperature sensor
 
-[alt tag](screenshot.png)
+![alt tag](screenshot.png)
 
 This is a demo with the USBDUX-sigma or USBDUX-D which displays
 channel 0 at a sampling rate of 10Hz on a website.
@@ -14,10 +14,10 @@ Install the COMEDI drivers for the Raspberry PI from here:
 ```
 https://github.com/glasgowneuro/comedi_raspberry_pi_bullseye
 ```
-and also the userspace libcomedi:
+and the userspace libcomedi and the json library:
 
 ```
-apt install libcomedi-dev
+apt install libcomedi-dev libjsoncpp-dev
 ```
 
 ## Compilation
