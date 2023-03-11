@@ -13,6 +13,7 @@
 
 #include "json_fastcgi_web_api.h"
 #include "ads1115rpi.h"
+#include <jsoncpp/json/json.h>
 
 /**
  * Flag to indicate that we are running.
@@ -104,11 +105,17 @@ public:
 	 * Gets the data sends it to the webserver -> client.
 	 **/
 	virtual std::string getJSONString() {
-		JSONCGIHandler::JSONGenerator jsonGenerator;
-		jsonGenerator.add("epoch",(long)time(NULL));
-		jsonGenerator.add("values",sensorfastcgi->values);
-		jsonGenerator.add("fs",(float)(sensorfastcgi->getADS1115settings().getSamplingRate()));
-		return jsonGenerator.getJSON();
+    	Json::Value root;
+        root["epoch"] = (long)time(NULL);
+        Json::Value values;
+        for(int i = 0; i < sensorfastcgi->values.size(); i++) {
+        	values[i] = sensorfastcgi->values[i];
+    	}
+        root["values"]  = values;
+    	root["fs"] = (float)(sensorfastcgi->getADS1115settings().getSamplingRate());
+        Json::StreamWriterBuilder builder;
+        const std::string json_file = Json::writeString(builder, root);
+        return json_file;
 	}
 };
 

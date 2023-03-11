@@ -12,6 +12,7 @@
 
 #include "json_fastcgi_web_api.h"
 #include "fakesensor.h"
+#include <jsoncpp/json/json.h>
 
 /**
  * Flag to indicate that we are running.
@@ -126,11 +127,18 @@ public:
 	 * timestamp and one with the temperature from the sensor.
 	 **/
 	virtual std::string getJSONString() {
-		JSONCGIHandler::JSONGenerator jsonGenerator;
-		jsonGenerator.add("epoch",(long)time(NULL));
-		jsonGenerator.add("temperature",sensorfastcgi->temperatureBuffer);
-		jsonGenerator.add("time",sensorfastcgi->timeBuffer);
-		return jsonGenerator.getJSON();
+        Json::Value root;
+        root["epoch"] = (long)time(NULL);
+        Json::Value temperature;
+		Json::Value t;
+        for(int i = 0; i < sensorfastcgi->temperatureBuffer.size(); i++) {
+        	temperature[i] = sensorfastcgi->temperatureBuffer[i];
+			t[i] = sensorfastcgi->timeBuffer[i];
+    	}
+        root["temperature"]  = temperature;
+        Json::StreamWriterBuilder builder;
+    	const std::string json_file = Json::writeString(builder, root);
+        return json_file;
 	}
 };
 
