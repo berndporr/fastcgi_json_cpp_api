@@ -1,5 +1,7 @@
 # USBDUX ADC demo with LM35 temperature sensor
 
+[alt tag](screenshot.png)
+
 This is a demo with the USBDUX-sigma or USBDUX-D which displays
 channel 0 at a sampling rate of 10Hz on a website.
 
