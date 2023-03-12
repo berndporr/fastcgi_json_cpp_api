@@ -1,4 +1,3 @@
-
 /*
  * Copyright (c) 2013-2023  Bernd Porr <mail@berndporr.me.uk>
  *
@@ -130,13 +129,24 @@ public:
 	}
 
 	/**
-	 * We force the voltage readings in the buffer to
+	 * As a demo we force the voltage readings in the buffer to
 	 * a certain value.
 	 **/
 	virtual void postString(std::string postArg) {
-		auto m = JSONCGIHandler::postDecoder(postArg);
-		float temp = atof(m["volt"].c_str());
-		std::cerr << m["hello"] << "\n";
+		// Let's parse the JSON
+		const auto rawJsonLength = static_cast<int>(postArg.length());
+		JSONCPP_STRING err;
+		Json::Value root;
+		Json::CharReaderBuilder builder;
+		const std::unique_ptr<Json::CharReader> reader(builder.newCharReader());
+		if (!reader->parse(postArg.c_str(), postArg.c_str() + rawJsonLength, &root,
+				   &err)) {
+			std::cout << "error" << std::endl;
+			return;
+		}
+		// JSON now parsed into a std::map
+		float temp = root["volt"].asFloat();
+		std::cerr << root["hello"].asString() << "\n";
 		sensorfastcgi->forceValue(temp);
 	}
 
@@ -192,7 +202,7 @@ int main(int argc, char *argv[]) {
 	fprintf(stderr,"'%s' shutting down.\n",argv[0]);
 
 	// stops the fast CGI handlder
-	delete fastCGIHandler;
+	fastCGIHandler.stop();
 	
 	return 0;
 }
