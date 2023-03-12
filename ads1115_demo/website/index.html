@@ -38,14 +38,18 @@
 				  });
 
 	      $("#driver").click(function(event){
-		  $.post( 
-                      serverPath,
+		  var d = 
                       {
 			  volt: 20,
 			  hello: "Sending over 20V!"
-		      }
-		  );
-		  
+		      };
+		  $.ajax({
+		      type: 'POST',
+                      url: serverPath,
+                      data: JSON.stringify(d),
+		      contentType: "application/json",
+		      dataType: 'json'
+		  });
               });
 	      
 	      window.intervalId = setInterval(function() {
