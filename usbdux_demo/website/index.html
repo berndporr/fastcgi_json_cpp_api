@@ -38,13 +38,17 @@
 				  });
 
 	      $("#driver").click(function(event){
-		  $.post( 
-                      serverPath,
-                      {
-			  degrees: 20,
-			  hello: "Sending over 20C!"
-		      }
-		  );
+		  var d = {
+		      degrees: 20,
+		      hello: "Sending over 20C!"
+		  };
+		  $.ajax({
+		      type: 'POST',
+                      url: serverPath,
+                      data: JSON.stringify(d),
+		      contentType: "application/json",
+		      dataType: 'json'
+		  });
 		  
               });
 	      

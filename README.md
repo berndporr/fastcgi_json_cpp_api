@@ -73,11 +73,6 @@ website for example when the user presses a button. Implement the callback:
 ```
 Overload `postString(std::string arg)` with a function
 which decodes the received POST data.
-Use:
-```
-postDecoder(std::string s)
-```
-which returns a `std::map` of key/value pairs.
 
 ### Start the communication
 

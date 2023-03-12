@@ -137,9 +137,18 @@ public:
 	 * a certain value.
 	 **/
 	virtual void postString(std::string postArg) {
-		auto m = JSONCGIHandler::postDecoder(postArg);
-		float temp = atof(m["degrees"].c_str());
-		std::cerr << m["hello"] << "\n";
+		const auto rawJsonLength = static_cast<int>(postArg.length());
+		JSONCPP_STRING err;
+		Json::Value root;
+		Json::CharReaderBuilder builder;
+		const std::unique_ptr<Json::CharReader> reader(builder.newCharReader());
+		if (!reader->parse(postArg.c_str(), postArg.c_str() + rawJsonLength, &root,
+				   &err)) {
+			std::cout << "error" << std::endl;
+			return;
+		}
+		float temp = root["degrees"].asFloat();
+		std::cerr << root["hello"].asString() << "\n";
 		datasink->forceValue(temp);
 	}
 
