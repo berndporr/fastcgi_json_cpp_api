@@ -16,7 +16,6 @@ Can also work alongside PHP as nginx can server both!
 
 ```
 apt-get install libfcgi-dev
-apt-get install libcurl4-openssl-dev
 apt-get install libjsoncpp-dev
 ```
 

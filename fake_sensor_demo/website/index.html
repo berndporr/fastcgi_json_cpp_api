@@ -40,15 +40,19 @@
 				  });
 
 	      $("#driver").click(function(event){
-		  $.post( 
-                      serverPath,
+		  var d = 
                       {
 			  temperature: 20,
 			  steps: 5,
 			  hello: "Hello, that's a test!"
-		      }
-		  );
-		  
+		      };
+		  $.ajax({
+		      type: 'POST',
+                      url: serverPath,
+                      data: JSON.stringify(d),
+		      contentType: "application/json",
+		      dataType: 'json'
+		  });
               });
 	      
 	      window.intervalId = setInterval(function() {

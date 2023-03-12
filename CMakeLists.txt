@@ -6,13 +6,13 @@ project(json_fastcgi_web_api)
 
 add_subdirectory(fake_sensor_demo)
 
-find_package( CURL )
+# find_package( CURL )
 
 add_library(json-fastcgi INTERFACE)
 
 target_include_directories(json-fastcgi INTERFACE .)
 
-TARGET_LINK_LIBRARIES(json-fastcgi INTERFACE fcgi curl)
+TARGET_LINK_LIBRARIES(json-fastcgi INTERFACE fcgi)
 
 if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
   set(CMAKE_BUILD_TYPE "RelWithDebInfo")

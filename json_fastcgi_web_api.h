@@ -13,8 +13,6 @@
 #include <fcgio.h>
 #include <thread>
 #include <string>
-#include <deque>
-#include <curl/curl.h>
 
 /**
  * C++ wrapper around fastCGI which sends and receives JSON
@@ -76,10 +74,6 @@ public:
 		const char socketpath[] = "/tmp/fastcgisocket") {
 		getCallback = argGetCallback;
 		postCallback = argPostCallback;
-		int r = curl_global_init(CURL_GLOBAL_NOTHING);
-		if (r) {
-			throw "Curl init error: ";
-		}
 		// set it to zero
 		memset(&request, 0, sizeof(FCGX_Request));
 		// init the connection
@@ -106,7 +100,6 @@ public:
 		if (!running) return;
 		running = false;
 		shutdown(sock_fd, SHUT_RDWR);
-		mainThread.join();
 		FCGX_Free(&request, sock_fd);
 		mainThread.join();
 	}
