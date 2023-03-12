@@ -6,8 +6,8 @@
  **/
 
 #include <math.h>
-#include "CppTimer.h"
-
+#include <chrono>
+#include <thread>
 
 /**
  * Callback for new samples which needs to be implemented by the main program.
@@ -26,11 +26,11 @@ public:
  * This class reads data from a fake sensor in the background
  * and calls a callback function whenever data is available.
  **/
-class FakeSensor : public CppTimer {
+class FakeSensor {
 
 public:
-	FakeSensor() {
-	}
+
+	FakeSensor() = default;
 
 	~FakeSensor() {
 		stop();
@@ -47,21 +47,25 @@ public:
 	 * Starts the data acquisition in the background and the
 	 * callback is called with new samples
 	 **/
-	void startSensor() {
-		start(250000000);
+	void start() {
+		if (running) return;
+		thr = std::thread(&FakeSensor::exec,this);
 	}
 
 	/**
 	 * Stops the data acquistion
 	 **/
-	void stopSensor() {
-		stop();
+	void stop() {
+		if (!running) return;
+		running = false;
+		thr.join();
 	}
 
+private:
 	/**
 	 * Fake the arrival of data
 	 **/
-	void timerEvent() {
+	void fakeEvent() {
 		float value = sin(t) * 5 + 20;
 		t += 0.1;
 		if (nullptr != sensorCallback) {
@@ -69,10 +73,26 @@ public:
                 }
         }
 
+	/**
+ 	* Thread which runs in an endless loop.
+	* Big fat warning: don't create timining
+ 	* with this in any real application as
+	* it's not precise. Just for demo purposes.
+ 	*/
+	void exec() {
+		running = true;
+		std::chrono::milliseconds duration( 100 );
+		while (running) {
+			std::this_thread::sleep_for( duration );
+			fakeEvent();
+		}
+	}
 
 private:
 	SensorCallback* sensorCallback = nullptr;
 	float t = 0;
+	bool running = false;
+	std::thread thr;
 };
 
 

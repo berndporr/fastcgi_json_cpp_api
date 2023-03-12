@@ -174,7 +174,9 @@ int main(int argc, char *argv[]) {
 	
 	// starting the fastCGI handler with the callback and the
 	// socket for nginx.
-	JSONCGIHandler* fastCGIHandler = new JSONCGIHandler(&fastCGIADCCallback,
+	JSONCGIHandler fastCGIHandler;
+	
+	fastCGIHandler.start(&fastCGIADCCallback,
 							    &postCallback,
 							    "/tmp/sensorsocket");
 
@@ -208,7 +210,7 @@ int main(int argc, char *argv[]) {
 	fprintf(stderr,"'%s' shutting down.\n",argv[0]);
 
 	// stops the fast CGI handlder
-	delete fastCGIHandler;
+	fastCGIHandler.stop();
 	
 	return 0;
 }

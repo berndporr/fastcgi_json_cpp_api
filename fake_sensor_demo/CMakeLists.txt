@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.10.0)
 project (fake_sensor_demo)
 include_directories(..)
-add_executable(demo_sensor_server demo_sensor_server.cpp CppTimer.cpp)
+add_executable(demo_sensor_server demo_sensor_server.cpp)
 set (CMAKE_CXX_STANDARD 14)
 find_package (Threads)
 find_package(PkgConfig REQUIRED)

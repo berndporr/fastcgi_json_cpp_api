@@ -5,6 +5,7 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <sys/signal.h>
 #include <sys/stat.h>
 #include <sys/socket.h>
@@ -13,18 +14,18 @@
 #include <thread>
 #include <string>
 #include <deque>
-#include <map>
 #include <curl/curl.h>
 
 /**
  * C++ wrapper around fastCGI which sends and receives JSON
  * in a jQuery friendly format.
  *
- * Copyright (C) 2021-2022  Bernd Porr <mail@berndporr.me.uk>
+ * Copyright (C) 2021-2023  Bernd Porr <mail@berndporr.me.uk>
  * Apache License 2.0
  **/
 class JSONCGIHandler {
 public:
+	JSONCGIHandler() = default;
 	/**
 	 * GET callback handler which needs to be implemented by the main
 	 * program.
@@ -63,73 +64,21 @@ public:
 		virtual void postString(std::string postArg) = 0;
 	};
 	
-
-public:
 	/**
-	 * Parses a POST string and returns a std::map with key/value pairs.
-	 * It also converts back any %xx style encoding back to chars using
-	 * libcurl.
-	 * Note this is a simple parser and it won't deal with nested
-	 * JSON structures.
-	 * \param s The POST string to be decoded.
-	 * \return A std::map which conains the key/value pairs.
-	 **/
-	static std::map<std::string,std::string> postDecoder(std::string s) {
-		std::map<std::string,std::string> postMap;
-		CURL *curl = curl_easy_init();
-		if (NULL == curl) {
-			std::cerr << "Could not init curl.\n";
-			return postMap;
-		}
-		size_t pos = 0;
-		while (1) {
-			std::string token;
-			pos = s.find("&");
-			if (pos == std::string::npos) {
-				token = s;
-			} else {
-				token = s.substr(0, pos);
-			}
-			size_t pos2 = token.find("=");
-			if (pos2 != std::string::npos) {
-				std::string key = token.substr(0,pos2);
-				std::string value = token.substr(pos2+1,token.length());
-				char* valueDecoded = curl_easy_unescape( curl, value.c_str(), value.length(), NULL );
-				if (NULL != valueDecoded) {
-					for(int i = 0; i < strlen(valueDecoded); i++) {
-						if (valueDecoded[i] == '+') valueDecoded[i] = ' ';
-					}
-					postMap[key] = valueDecoded;
-					curl_free(valueDecoded);
-				}
-			}
-			if (pos == std::string::npos) break;
-			s.erase(0, pos + 1);
-		}
-		curl_easy_cleanup(curl);
-		return postMap;
-	}
-
-	
-	/**
-	 * Constructor which opens the connection and starts the main thread.
-	 * Provide an instance of the callback handler which returns the
-	 * payload data. argPostCallback is the callback which returns
-	 * received json packets as a map. The optional socketpath variable
-	 * can be set to another path for the socket which talks to the
-	 * webserver.
+	 * Opens the connection and starts the main thread.
 	 * \param argGetCallback Callback handler for sending JSON
 	 * \param argPostCallback Callback handler for receiving JSON
 	 * \param socketpath Path of the socket which communicates to the webserver
 	 **/
-	JSONCGIHandler(GETCallback* argGetCallback,
-		       POSTCallback* argPostCallback = nullptr,
-		       const char socketpath[] = "/tmp/fastcgisocket") {
+	void start(
+		GETCallback* argGetCallback,
+		POSTCallback* argPostCallback = nullptr,
+		const char socketpath[] = "/tmp/fastcgisocket") {
 		getCallback = argGetCallback;
 		postCallback = argPostCallback;
 		int r = curl_global_init(CURL_GLOBAL_NOTHING);
 		if (r) {
-			std::cerr << "Curl init error: " << r << "\n";
+			throw "Curl init error: ";
 		}
 		// set it to zero
 		memset(&request, 0, sizeof(FCGX_Request));
@@ -137,6 +86,10 @@ public:
 		FCGX_Init();
 		// open the socket
 		sock_fd = FCGX_OpenSocket(socketpath, 1024);
+		if (sock_fd < 0) {
+			std::string s = "Could not open socket. Error: "+sock_fd;
+			throw s.c_str();
+		}
 		// making sure the nginx process can read/write to it
 		chmod(socketpath, S_IRUSR|S_IRGRP|S_IROTH|S_IWUSR|S_IWGRP|S_IWOTH);
 		// init requests so that we can accept requests
@@ -146,19 +99,26 @@ public:
 	}
 
 	/**
-	 * Destructor which shuts down the connection to the webserver and
+	 * Shuts down the connection to the webserver and
 	 * it also terminates the thread which is waiting for requests.
 	 **/
-	~JSONCGIHandler() {
-		running = 0;
+	void stop() {
+		if (!running) return;
+		running = false;
 		shutdown(sock_fd, SHUT_RDWR);
 		mainThread.join();
 		FCGX_Free(&request, sock_fd);
+		mainThread.join();
+	}
+
+	~JSONCGIHandler() {
+		stop();
 	}
 
  private:
 	void exec() {
-		while ((running) && (FCGX_Accept_r(&(request)) == 0)) {
+		running = true;
+		while (running && (FCGX_Accept_r(&request) == 0)) {
 			char * method = FCGX_GetParam("REQUEST_METHOD", request.envp);
 			if (method == nullptr) {
 				fprintf(stderr,"Please add 'include fastcgi_params;' to the nginx conf.\n");
@@ -166,7 +126,7 @@ public:
 			}
 			if (strcmp(method, "GET") == 0) {
 				// create the header
-				std::string buffer = "Content-type: "+getCallback->getContentType();
+				std::string buffer = "Content-type: " + getCallback->getContentType();
 				buffer = buffer + "; charset=utf-8\r\n";
 				buffer = buffer + "\r\n";
 				// append the data
@@ -174,7 +134,7 @@ public:
 				buffer = buffer + "\r\n";
 				// send the data to the web server
 				FCGX_PutStr(buffer.c_str(), buffer.length(), request.out);
-				FCGX_Finish_r(&(request));
+				FCGX_Finish_r(&request);
 			}
 			if (strcmp(method, "POST") == 0) {
 				long reqLen = 1;
@@ -205,7 +165,7 @@ public:
  private:
 	FCGX_Request request;
 	int sock_fd = 0;
-	int running = 1;
+	bool running = false;
 	std::thread mainThread;
 	GETCallback* getCallback = nullptr;
 	POSTCallback* postCallback = nullptr;

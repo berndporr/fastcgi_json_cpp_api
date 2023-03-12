@@ -1,6 +1,6 @@
 
 /*
- * Copyright (c) 2013-2022  Bernd Porr <mail@berndporr.me.uk>
+ * Copyright (c) 2013-2023  Bernd Porr <mail@berndporr.me.uk>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -159,12 +159,15 @@ int main(int argc, char *argv[]) {
 	// Callback handler for data which arrives from the
 	// browser via jquery json post requests
 	SENSORPOSTCallback postCallback(&sensorcomm);
-	
+
+	// instance of our fastCGI handler
+	JSONCGIHandler fastCGIHandler;
+
 	// starting the fastCGI handler with the callback and the
 	// socket for nginx.
-	JSONCGIHandler* fastCGIHandler = new JSONCGIHandler(&fastCGIADCCallback,
-							    &postCallback,
-							    "/tmp/sensorsocket");
+	fastCGIHandler.start(&fastCGIADCCallback,
+			     &postCallback,
+			     "/tmp/sensorsocket");
 
 	ADS1115settings s;
         s.samplingRate = ADS1115settings::FS8HZ;

@@ -1,12 +1,14 @@
-# jQuery <--> C++ fastcgi API
+# jQuery <--> C++ JSON communication
 
 C++ Header-only event driven communication between jQuery in a web-browser via nginx.
-This can for example implement a RESTful API.
+This can, for example, implement a RESTful API for fast sensor data transfer.
 
 This was developed because of a lack of a lightweight jQuery to C++
 communication. It's a small helper which can easily be
 included in any C++ application which needs to talk to a web page
 where realtime data needs to be exchanged.
+
+Can also work alongside PHP as nginx can server both!
 
 ![alt tag](dataflow.png)
 
@@ -76,27 +78,19 @@ which decodes the received POST data.
 
 ### Start the communication
 
-The constructor takes as arguments the GET callback, the POST callback
-and the path to the fastCGI socket. As soon as the constructor is
-instantiated the communication starts.
+The start method takes as arguments the GET callback, the POST callback
+and the path to the fastCGI socket:
 
 ```
-       /**
-         * Constructor which inits it and starts the main thread.
-         * Provide an instance of the callback handler which provides the
-         * payload data in return. The optional socketpath variable
-         * can be set to another path for the socket which talks to the
-         * webserver. postCallback is the callback which returns
-         * received json packets as a map.
-         **/
-        JSONCGIHandler(GETCallback* argGetCallback,
-                       POSTCallback* argPostCallback = nullptr,
-		       const char socketpath[] = "/tmp/fastcgisocket");
+JSONCGIHandler jsoncgihandler;
+jsoncgihandler.start(GETCallback* argGetCallback,
+                     POSTCallback* argPostCallback = nullptr,
+		     const char socketpath[] = "/tmp/fastcgisocket");
 ```
 
 ### Stop the communication
 
-This is done by deleting the instance.
+Just call `jsoncgihandler.stop()` to shut down the communication.
 
 
 ## Example code

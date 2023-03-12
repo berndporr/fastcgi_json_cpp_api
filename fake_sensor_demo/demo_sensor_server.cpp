@@ -18,7 +18,7 @@
  * Flag to indicate that we are running.
  * Needed later to quit the idle loop.
  **/
-int mainRunning = 1;
+bool mainRunning = true;
 
 /**
  * Handler when the user has pressed ctrl-C
@@ -26,7 +26,7 @@ int mainRunning = 1;
  **/
 void sigHandler(int sig) { 
 	if((sig == SIGHUP) || (sig == SIGINT)) {
-		mainRunning = 0;
+		mainRunning = false;
 	}
 }
 
@@ -163,9 +163,18 @@ public:
 	 * to be 20 degrees for a certain number of timesteps.
 	 **/
 	virtual void postString(std::string postArg) {
-		auto m = JSONCGIHandler::postDecoder(postArg);
-		float temp = atof(m["temperature"].c_str());
-		std::cerr << m["hello"] << "\n";
+		const auto rawJsonLength = static_cast<int>(postArg.length());
+		JSONCPP_STRING err;
+		Json::Value root;
+		Json::CharReaderBuilder builder;
+		const std::unique_ptr<Json::CharReader> reader(builder.newCharReader());
+		if (!reader->parse(postArg.c_str(), postArg.c_str() + rawJsonLength, &root,
+				   &err)) {
+			std::cout << "error" << std::endl;
+			return;
+		}
+		float temp = root["temperature"].asFloat();
+		std::cerr << root["hello"].asString() << "\n";
 		sensorfastcgi->forceTemperature(temp);
 	}
 
@@ -179,10 +188,14 @@ public:
 // Main program
 int main(int argc, char *argv[]) {
 	// getting all the ADC related acquistion set up
-	FakeSensor* sensorcomm = new FakeSensor();
+	FakeSensor sensorcomm;
 	SENSORfastcgicallback sensorfastcgicallback;
-	sensorcomm->setCallback(&sensorfastcgicallback);
+	sensorcomm.setCallback(&sensorfastcgicallback);
 
+	// Callback handler for data which arrives from the the
+	// browser via jquery json post requests:
+	SENSORPOSTCallback postCallback(&sensorfastcgicallback);
+	
 	// Setting up the JSONCGI communication
 	// The callback which is called when fastCGI needs data
 	// gets a pointer to the SENSOR callback class which
@@ -190,27 +203,16 @@ int main(int argc, char *argv[]) {
 	// example to have access to some data.
 	JSONCGIADCCallback fastCGIADCCallback(&sensorfastcgicallback);
 
-	// Callback handler for data which arrives from the the
-	// browser via jquery json post requests:
-	// $.post( 
-        //              "/sensor/:80",
-        //              {
-	//                lastvalue: 20,
-	//		  temperature: [20,18,19,20],
-	//                time: [171717,171718,171719,171720],
-	//                hello: "Hello, that's a test!"
-	//	      }
-	//	  );
-	SENSORPOSTCallback postCallback(&sensorfastcgicallback);
-	
+	// creating an instance of the fast CGI handler
+	JSONCGIHandler jsoncgiHandler;
+
 	// starting the fastCGI handler with the callback and the
 	// socket for nginx.
-	JSONCGIHandler* fastCGIHandler = new JSONCGIHandler(&fastCGIADCCallback,
-							    &postCallback,
+	jsoncgiHandler.start(&fastCGIADCCallback,&postCallback,
 							    "/tmp/sensorsocket");
 
 	// starting the data acquisition at the given sampling rate
-	sensorcomm->startSensor();
+	sensorcomm.start();
 
 	// catching Ctrl-C or kill -HUP so that we can terminate properly
 	setHUPHandler();
@@ -225,11 +227,8 @@ int main(int argc, char *argv[]) {
 
 	fprintf(stderr,"'%s' shutting down.\n",argv[0]);
 
-	// stopping ADC
-	delete sensorcomm;
+	sensorcomm.stop();
+	jsoncgiHandler.stop();
 
-	// stops the fast CGI handlder
-	delete fastCGIHandler;
-	
 	return 0;
 }
