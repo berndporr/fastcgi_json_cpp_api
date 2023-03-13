@@ -64,7 +64,6 @@ $(function() {
   <div class="summary">
 <a href="#nested-classes">Classes</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
-<a href="#pub-static-methods">Static Public Member Functions</a> &#124;
 <a href="classJSONCGIHandler-members.html">List of all members</a>  </div>
   <div class="headertitle">
 <div class="title">JSONCGIHandler Class Reference</div>  </div>
@@ -82,22 +81,17 @@ Classes</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a9bf5a96d13949d363225561ba6ac3b56"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classJSONCGIHandler.html#a9bf5a96d13949d363225561ba6ac3b56">JSONCGIHandler</a> (<a class="el" href="classJSONCGIHandler_1_1GETCallback.html">GETCallback</a> *argGetCallback, <a class="el" href="classJSONCGIHandler_1_1POSTCallback.html">POSTCallback</a> *argPostCallback=nullptr, const char socketpath[]=&quot;/tmp/fastcgisocket&quot;)</td></tr>
-<tr class="separator:a9bf5a96d13949d363225561ba6ac3b56"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4817e428a962bdea68123f2d32671f30"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classJSONCGIHandler.html#a4817e428a962bdea68123f2d32671f30">~JSONCGIHandler</a> ()</td></tr>
-<tr class="separator:a4817e428a962bdea68123f2d32671f30"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
-Static Public Member Functions</h2></td></tr>
-<tr class="memitem:a0f208af3dd050ed182967fe9cca42d78"><td class="memItemLeft" align="right" valign="top">static std::map&lt; std::string, std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classJSONCGIHandler.html#a0f208af3dd050ed182967fe9cca42d78">postDecoder</a> (std::string s)</td></tr>
-<tr class="separator:a0f208af3dd050ed182967fe9cca42d78"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab3e30e5a0cc3761d9b385cf3a33f6e73"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classJSONCGIHandler.html#ab3e30e5a0cc3761d9b385cf3a33f6e73">start</a> (<a class="el" href="classJSONCGIHandler_1_1GETCallback.html">GETCallback</a> *argGetCallback, <a class="el" href="classJSONCGIHandler_1_1POSTCallback.html">POSTCallback</a> *argPostCallback=nullptr, const char socketpath[]=&quot;/tmp/fastcgisocket&quot;)</td></tr>
+<tr class="separator:ab3e30e5a0cc3761d9b385cf3a33f6e73"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9655bf116b3bc3129e60c2a211c478f9"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classJSONCGIHandler.html#a9655bf116b3bc3129e60c2a211c478f9">stop</a> ()</td></tr>
+<tr class="separator:a9655bf116b3bc3129e60c2a211c478f9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>C++ wrapper around fastCGI which sends and receives JSON in a jQuery friendly format.</p>
-<p>Copyright (C) 2021-2022 Bernd Porr <a href="#" onclick="location.href='mai'+'lto:'+'mai'+'l@'+'ber'+'nd'+'por'+'r.'+'me.'+'uk'; return false;">mail@<span style="display: none;">.nosp@m.</span>bern<span style="display: none;">.nosp@m.</span>dporr<span style="display: none;">.nosp@m.</span>.me.<span style="display: none;">.nosp@m.</span>uk</a> Apache License 2.0 </p>
-</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a9bf5a96d13949d363225561ba6ac3b56"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9bf5a96d13949d363225561ba6ac3b56">&#9670;&nbsp;</a></span>JSONCGIHandler()</h2>
+<p>Copyright (C) 2021-2023 Bernd Porr <a href="#" onclick="location.href='mai'+'lto:'+'mai'+'l@'+'ber'+'nd'+'por'+'r.'+'me.'+'uk'; return false;">mail@<span style="display: none;">.nosp@m.</span>bern<span style="display: none;">.nosp@m.</span>dporr<span style="display: none;">.nosp@m.</span>.me.<span style="display: none;">.nosp@m.</span>uk</a> Apache License 2.0 </p>
+</div><h2 class="groupheader">Member Function Documentation</h2>
+<a id="ab3e30e5a0cc3761d9b385cf3a33f6e73"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab3e30e5a0cc3761d9b385cf3a33f6e73">&#9670;&nbsp;</a></span>start()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -106,7 +100,7 @@ Static Public Member Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">JSONCGIHandler::JSONCGIHandler </td>
+          <td class="memname">void JSONCGIHandler::start </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="classJSONCGIHandler_1_1GETCallback.html">GETCallback</a> *&#160;</td>
           <td class="paramname"><em>argGetCallback</em>, </td>
@@ -135,7 +129,7 @@ Static Public Member Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Constructor which opens the connection and starts the main thread. Provide an instance of the callback handler which returns the payload data. argPostCallback is the callback which returns received json packets as a map. The optional socketpath variable can be set to another path for the socket which talks to the webserver. </p><dl class="params"><dt>Parameters</dt><dd>
+<p>Opens the connection and starts the main thread. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">argGetCallback</td><td>Callback handler for sending JSON </td></tr>
     <tr><td class="paramname">argPostCallback</td><td>Callback handler for receiving JSON </td></tr>
@@ -146,8 +140,8 @@ Static Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="a4817e428a962bdea68123f2d32671f30"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4817e428a962bdea68123f2d32671f30">&#9670;&nbsp;</a></span>~JSONCGIHandler()</h2>
+<a id="a9655bf116b3bc3129e60c2a211c478f9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9655bf116b3bc3129e60c2a211c478f9">&#9670;&nbsp;</a></span>stop()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -156,7 +150,7 @@ Static Public Member Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">JSONCGIHandler::~JSONCGIHandler </td>
+          <td class="memname">void JSONCGIHandler::stop </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -168,41 +162,7 @@ Static Public Member Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Destructor which shuts down the connection to the webserver and it also terminates the thread which is waiting for requests. </p>
-
-</div>
-</div>
-<h2 class="groupheader">Member Function Documentation</h2>
-<a id="a0f208af3dd050ed182967fe9cca42d78"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0f208af3dd050ed182967fe9cca42d78">&#9670;&nbsp;</a></span>postDecoder()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">static std::map&lt;std::string,std::string&gt; JSONCGIHandler::postDecoder </td>
-          <td>(</td>
-          <td class="paramtype">std::string&#160;</td>
-          <td class="paramname"><em>s</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<p>Parses a POST string and returns a std::map with key/value pairs. It also converts back any xx style encoding back to chars using libcurl. Note this is a simple parser and it won't deal with nested JSON structures. </p><dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">s</td><td>The POST string to be decoded. </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>A std::map which conains the key/value pairs. </dd></dl>
+<p>Shuts down the connection to the webserver and it also terminates the thread which is waiting for requests. </p>
 
 </div>
 </div>
@@ -212,7 +172,7 @@ Static Public Member Functions</h2></td></tr>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Sat Mar 11 2023 20:50:33 for json_fastcgi_web_api by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1
+Generated on Mon Mar 13 2023 19:30:11 for json_fastcgi_web_api by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1
 </small></address>
 </body>
 </html>
