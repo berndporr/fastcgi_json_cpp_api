@@ -36,7 +36,7 @@ json_fastcgi_web_api.h
 
 The file `json_fastcgi_web_api.h` has extensive inline documentation. 
 Its doxygen generated online documentation is here: 
-https://berndporr.github.io/json_fastcgi_web_api/
+https://berndporr.github.io/fastcgi_json_cpp_api/
 
 ### Implement the GET callback (server -> client)
 
