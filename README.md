@@ -1,14 +1,14 @@
 # jQuery <--> C++ JSON communication
 
-C++ Header-only event driven communication between jQuery in a web-browser via nginx.
-This can, for example, implement a RESTful API for fast sensor data transfer.
+C++ Header-only event driven communication between jQuery in a web-browser via the nginx web-server.
+This can implement, for example, a RESTful API for fast sensor data transfer.
 
 This was developed because of a lack of a lightweight jQuery to C++
 communication. It's a small helper which can easily be
 included in any C++ application which needs to talk to a web page
 where realtime data needs to be exchanged.
 
-Can also work alongside PHP as nginx can server both!
+Works alongside PHP as nginx can serve both!
 
 ![alt tag](dataflow.png)
 
