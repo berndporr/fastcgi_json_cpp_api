@@ -24,18 +24,15 @@
 class JSONCGIHandler {
 public:
 	JSONCGIHandler() = default;
+	
 	/**
 	 * GET callback handler which needs to be implemented by the main
-	 * program.
-	 * This needs to provide the JSON payload as a string either by using
-	 * the simple JSONGenerator or by an external library.
+	 * program. This needs to provide the JSON payload.
 	 **/
 	class GETCallback {
 	public:
 		/**
-		 * Needs to return the payload data sent to the web browser.
-		 * Use the JSONGenerator to create the JSON or use an 
-		 * external json generator.
+		 * Needs to return the JSON data sent to the web browser.
 		 * \return JSON data
 		 **/
 		virtual std::string getJSONString() = 0;
@@ -55,8 +52,7 @@ public:
 	class POSTCallback {
 	public:
 		/**
-		 * Receives the POST data from the web browser.
-		 * Use postDecoder() to decode the postArg string.
+		 * Receives the POST JSON data from the web browser.
 		 * \param postArg POST data received from jQuery
 		 **/
 		virtual void postString(std::string postArg) = 0;
