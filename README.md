@@ -46,8 +46,7 @@ This is the callback which sends JSON packets to the client (website, phone app,
 	class GETCallback {
 	public:
 		/**
-		 * Needs to return the payload data sent to the web browser.
-		 * Use the JSON generator class or an external json generator.
+		 * Needs to return the JSON data sent to the web browser.
 		 **/
 		virtual std::string getJSONString() = 0;
 	};
@@ -66,14 +65,11 @@ website for example when the user presses a button. Implement the callback:
 	public:
 		/**
 		 * Receives the data from the web browser in JSON format.
-		 * Use postDecoder() to decode the JSON or use an external
-		 * library.
 		 **/
 		virtual void postString(std::string arg) = 0;
 	};
 ```
-Overload `postString(std::string arg)` with a function
-which decodes the received POST data.
+Overload `postString(std::string arg)` with a function which decodes the received POST data.
 
 ### Start the communication
 
