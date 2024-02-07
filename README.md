@@ -17,6 +17,7 @@ Works alongside PHP as nginx can serve both!
 ```
 apt-get install libfcgi-dev
 apt-get install libjsoncpp-dev
+apt-get install nginx-core
 ```
 
 ## Installation
