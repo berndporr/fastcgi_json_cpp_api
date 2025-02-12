@@ -24,6 +24,7 @@ apt-get install nginx-core
 
 This is a pure header based library. All the code is in `json_fastcgi_web_api.h`. Just type:
 ```
+cmake .
 sudo make install json_fastcgi_web_api.h
 ```
 to install the header in the system-wide include dir.
