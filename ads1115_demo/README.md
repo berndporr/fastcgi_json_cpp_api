@@ -41,9 +41,9 @@ The fast cgi server `ads1115_server` creates a socket under
 
  1. copy the the nginx config file `website/nginx-sites-enabled-default` to your
     nginx config directory `/etc/nginx/sites-enabled/default`.
- 2. copy `website/ads1115.html` to `/var/www/html`.
+ 2. copy `website/index.html` to `/var/www/html`.
  
-Then point your web-browser to `ads1115.html` on your website.
+Then point your web-browser to your website.
 You should see the ADC readings on the screen and a plot with dygraph.
 The JSON packets can be viewed by appending `/sensor/` to the server URL.
 
