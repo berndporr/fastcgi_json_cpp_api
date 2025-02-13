@@ -92,23 +92,12 @@ Just call `jsoncgihandler.stop()` to shut down the communication.
 
 ## Example code
 
-### Fake sensor demo
 The subdir `fake_sensor_demo` contains a `demo_sensor_server` which fakes a temperature sensor
 and its readings are plotted in a web browser. The nginx
 config file and the website are in the `website`
 directory.
 
-### Real ADC ADS1115 realtime demo
-The subdir `ads1115_demo` contains a demo where the channel one from a real ADS1115 ADC chip is
-plotted in a web browser. You need an ADS1115 ADC for this demo.
 
-### Real USB-DUX realtime demo
-The subdir `usbdux_demo` contains a demo where the temperature from an LM35 is digitised
-with a [USB-DUX](https://github.com/glasgowneuro/usbdux) and then plotted in a web browser.
-You need an USB-DUX (sigma or D) for this demo.
-
-
-## Credit
 
 Bernd Porr, mail@berndporr.me.uk
 
