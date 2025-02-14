@@ -6,8 +6,6 @@
  **/
 
 #include <math.h>
-#include <chrono>
-#include <thread>
 #include "CppTimer.h"
 
 /**
@@ -64,8 +62,6 @@ private:
 private:
     SensorCallback* sensorCallback = nullptr;
     float t = 0;
-    bool running = false;
-    std::thread thr;
 };
 
 
