@@ -2,5 +2,5 @@
 rm -rf docs
 mkdir docs
 doxygen
-cd docs
-git add .
+git add docs
+
