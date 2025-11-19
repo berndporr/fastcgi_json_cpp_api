@@ -54,4 +54,4 @@ Point your web-browser to your website.
 You should see a temperature reading on the screen and a plot with dygraph.
 The JSON packets can be viewed by appending `/sensor/` to the server URL.
 
-![alt tag](json.jpg)
+![alt tag](json.png)
