@@ -43,7 +43,7 @@
 		      y = result.lastvalue;
                       document.getElementById("temperature").innerHTML = Math.round(y * 100) / 100;
                       for(let i = 0; i < result.time.length; i++) {
-			  const d = new Date(result.time[i]*1000);
+			  const d = new Date(result.time[i]);
 			  var y = result.temperature[i];
 			  data.push([d, y]);
 		      }

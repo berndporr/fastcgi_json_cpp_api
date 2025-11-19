@@ -15,6 +15,10 @@
 #include "ds18b20.h"
 #include <jsoncpp/json/json.h>
 
+// Constants
+const int temperatureBufferSize = 500;
+const int samplingIntervalSec = 10;
+
 /**
  * Flag to indicate that we are running.
  * Needed later to quit the idle loop.
@@ -60,42 +64,40 @@ void setHUPHandler() {
  **/
 class SENSORfastcgicallback : public SensorCallback {
 public:
-	std::deque<float> temperatureBuffer;
-	std::deque<long> timeBuffer;
-	long t;
-	const int maxBufSize = 50;
-	float lastValue = 0;
-
-	/**
-	 * Callback with the fresh ADC data.
-	 * That's where all the internal processing
-	 * of the data is happening. Here, we just
-	 * convert the raw ADC data to temperature
-	 * and store it in a variable.
-	 **/
-	virtual void hasSample(float v) {
-		lastValue = v;
-		temperatureBuffer.push_back(v);
-		if (temperatureBuffer.size() > maxBufSize) temperatureBuffer.pop_front();
-		// timestamp
-		t = getTime();
-		timeBuffer.push_back(t);
-		if (timeBuffer.size() > maxBufSize) timeBuffer.pop_front();
-	}
-
-	void forceTemperature(float temp) {
-		for(auto& v:temperatureBuffer) {
-			v = temp;
-		}
-	}
+    std::deque<float> temperatureBuffer;
+    std::deque<long> timeBuffer;
+    long t;
+    int maxBufSize;
+    float lastValue = 0;
+    
+    SENSORfastcgicallback(int maxReadingsInBuffer) {
+	maxBufSize = maxReadingsInBuffer;
+    }
+    
+    /**
+     * Callback with the fresh ADC data.
+     * That's where all the internal processing
+     * of the data is happening. Here, we just
+     * convert the raw ADC data to temperature
+     * and store it in a variable.
+     **/
+    virtual void hasTemperature(float v) {
+	lastValue = v;
+	temperatureBuffer.push_back(v);
+	if (temperatureBuffer.size() > maxBufSize) temperatureBuffer.pop_front();
+	// timestamp
+	t = getTime();
+	timeBuffer.push_back(t);
+	if (timeBuffer.size() > maxBufSize) timeBuffer.pop_front();
+    }
 
 private:
-	static unsigned long getTime() {
-                std::chrono::time_point<std::chrono::system_clock> now = 
-                        std::chrono::system_clock::now();
-                auto duration = now.time_since_epoch();
-                return (unsigned long)std::chrono::duration_cast<std::chrono::seconds>(duration).count();
-        }
+    unsigned long getTime() const {
+	std::chrono::time_point<std::chrono::system_clock> now = 
+	    std::chrono::system_clock::now();
+	auto duration = now.time_since_epoch();
+	return (unsigned long)std::chrono::duration_cast<std::chrono::milliseconds>(duration).count();
+    }
 };
 
 
@@ -159,7 +161,7 @@ int main(int argc, char *argv[]) {
     
     // getting all the ADC related acquistion set up
     DS18B20 sensorcomm;
-    SENSORfastcgicallback sensorfastcgicallback;
+    SENSORfastcgicallback sensorfastcgicallback(temperatureBufferSize);
     sensorcomm.setCallback(&sensorfastcgicallback);
     
     // Setting up the JSONCGI communication

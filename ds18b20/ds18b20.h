@@ -1,5 +1,5 @@
-#ifndef __FAKESENSOR_H
-#define __FAKESENSOR_H
+#ifndef __DS18B20_H
+#define __DS18B20_H
 
 /**
  * Copyright (c) 2025  Bernd Porr <mail@berndporr.me.uk>
@@ -10,14 +10,14 @@
 
 /**
  * Callback for new samples which needs to be implemented by the main program.
- * The function hasSample needs to be overloaded in the main program.
+ * The function hasTemperature needs to be overloaded in the main program.
  **/
 class SensorCallback {
 public:
     /**
-     * Called after a sample has arrived.
+     * Called after a new tempertature reading has arrived
      **/
-    virtual void hasSample(float sample) = 0;
+    virtual void hasTemperature(float degrees) = 0;
 };
 
 
@@ -42,9 +42,9 @@ public:
 	sensorCallback = cb;
     }
 
-    void start(std::string sensorTmperaturePath) {
+    void start(std::string sensorTmperaturePath, int samplingIntervalSec = 10) {
 	dsPath = sensorTmperaturePath;
-	startms(10000);
+	startms(samplingIntervalSec*1000);
     }
 
 private:
@@ -52,11 +52,18 @@ private:
      * The arrival of data
      **/
     void timerEvent() {
+	if (nullptr == sensorCallback) return;
 	FILE* f = fopen(dsPath.c_str(),"rt");
+	if (!f) {
+	    fprintf(stderr,"Could not open %s.\n",dsPath.c_str());
+	    return;
+	}
 	float value;
-	fscanf(f,"%f",&value);
-	if (nullptr != sensorCallback) {
-	    sensorCallback->hasSample(value/1000.0f);
+	const int r = fscanf(f,"%f",&value);
+	if (r > 0) {
+	    sensorCallback->hasTemperature(round(value/100.0f)/10.0f);
+	} else {
+	    fprintf(stderr,"Could not read from %s. Error code: %d.",dsPath.c_str(),r);
 	}
 	fclose(f);
     }
