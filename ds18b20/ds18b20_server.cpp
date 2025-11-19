@@ -150,42 +150,6 @@ public:
 };
 
 
-/**
- * Callback handler which receives the JSON from jQuery
- **/
-class SENSORPOSTCallback : public JSONCGIHandler::POSTCallback {
-public:
-	SENSORPOSTCallback(SENSORfastcgicallback* argSENSORfastcgi) {
-		sensorfastcgi = argSENSORfastcgi;
-	}
-
-	/**
-	 * As a crude example we force the temperature readings
-	 * to be 20 degrees for a certain number of timesteps.
-	 **/
-	virtual void postString(std::string postArg) {
-		const auto rawJsonLength = static_cast<int>(postArg.length());
-		JSONCPP_STRING err;
-		Json::Value root;
-		Json::CharReaderBuilder builder;
-		const std::unique_ptr<Json::CharReader> reader(builder.newCharReader());
-		if (!reader->parse(postArg.c_str(), postArg.c_str() + rawJsonLength, &root,
-				   &err)) {
-			std::cout << "error" << std::endl;
-			return;
-		}
-		float temp = root["temperature"].asFloat();
-		std::cerr << root["hello"].asString() << "\n";
-		sensorfastcgi->forceTemperature(temp);
-	}
-
-	/**
-	 * Pointer to the handler which keeps the temperature
-	 **/
-	SENSORfastcgicallback* sensorfastcgi;
-};
-	
-
 // Main program
 int main(int argc, char *argv[]) {
     if (argc < 2) {
@@ -197,10 +161,6 @@ int main(int argc, char *argv[]) {
     DS18B20 sensorcomm;
     SENSORfastcgicallback sensorfastcgicallback;
     sensorcomm.setCallback(&sensorfastcgicallback);
-    
-    // Callback handler for data which arrives from the the
-    // browser via jquery json post requests:
-    SENSORPOSTCallback postCallback(&sensorfastcgicallback);
     
     // Setting up the JSONCGI communication
     // The callback which is called when fastCGI needs data
@@ -214,7 +174,7 @@ int main(int argc, char *argv[]) {
     
     // starting the fastCGI handler with the callback and the
     // socket for nginx.
-    jsoncgiHandler.start(&fastCGIADCCallback,&postCallback,
+    jsoncgiHandler.start(&fastCGIADCCallback,nullptr,
 			 "/tmp/sensorsocket");
     
     // starting the data acquisition at the given sampling rate

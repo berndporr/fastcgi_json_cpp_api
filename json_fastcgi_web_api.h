@@ -125,28 +125,28 @@ public:
 				FCGX_PutStr(buffer.c_str(), buffer.length(), request.out);
 				FCGX_Finish_r(&request);
 			}
-			if (strcmp(method, "POST") == 0) {
-				long reqLen = 1;
-				char * content_length_str = FCGX_GetParam("CONTENT_LENGTH",
-									  request.envp);
-				if (content_length_str) reqLen = atol(content_length_str)+1;
-				char* tmp = new char[reqLen];
-				FCGX_GetStr(tmp,reqLen,request.in);
-				tmp[reqLen - 1] = 0;
-				if (nullptr != postCallback) {
-					postCallback->postString(tmp);
-				}
-				delete[] tmp;
-				// create the header
-				std::string buffer = "Content-type: text/html";
-				buffer = buffer + "; charset=utf-8\r\n";
-				buffer = buffer + "\r\n";
-				// append the data
-				buffer = buffer + "\r\n";
-				buffer = buffer + "<html></html>\r\n";
-				// send the data to the web server
-				FCGX_PutStr(buffer.c_str(), buffer.length(), request.out);
-				FCGX_Finish_r(&request);
+			if ( (nullptr != postCallback) && (strcmp(method, "POST") == 0) ) {
+			    long reqLen = 1;
+			    char * content_length_str = FCGX_GetParam("CONTENT_LENGTH",
+								      request.envp);
+			    if (content_length_str) reqLen = atol(content_length_str)+1;
+			    char* tmp = new char[reqLen];
+			    FCGX_GetStr(tmp,reqLen,request.in);
+			    tmp[reqLen - 1] = 0;
+			    if (nullptr != postCallback) {
+				postCallback->postString(tmp);
+			    }
+			    delete[] tmp;
+			    // create the header
+			    std::string buffer = "Content-type: text/html";
+			    buffer = buffer + "; charset=utf-8\r\n";
+			    buffer = buffer + "\r\n";
+			    // append the data
+			    buffer = buffer + "\r\n";
+			    buffer = buffer + "<html></html>\r\n";
+			    // send the data to the web server
+			    FCGX_PutStr(buffer.c_str(), buffer.length(), request.out);
+			    FCGX_Finish_r(&request);
 			}
 		}
 	}
