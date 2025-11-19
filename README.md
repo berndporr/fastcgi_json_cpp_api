@@ -92,11 +92,15 @@ Just call `jsoncgihandler.stop()` to shut down the communication.
 
 ## Example code
 
+### Fake Sensor
 The subdir `fake_sensor_demo` contains a `demo_sensor_server` which fakes a temperature sensor
 and its readings are plotted in a web browser. The nginx
 config file and the website are in the `website`
 directory.
 
+### Real temperature readings with the DS18B20
+
+Navigate to the subdir `ds18b20` how to measure real temperature readings.
 
 
 Bernd Porr, mail@berndporr.me.uk
