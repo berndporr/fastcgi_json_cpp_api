@@ -5,6 +5,7 @@ set(CMAKE_CXX_STANDARD 14)
 project(json_fastcgi_web_api)
 
 add_subdirectory(fake_sensor_demo)
+add_subdirectory(ds18b20)
 
 # find_package( CURL )
 
