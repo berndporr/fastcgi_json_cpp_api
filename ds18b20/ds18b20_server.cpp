@@ -78,7 +78,7 @@ public:
 		temperatureBuffer.push_back(v);
 		if (temperatureBuffer.size() > maxBufSize) temperatureBuffer.pop_front();
 		// timestamp
-		t = getTimeMS();
+		t = getTime();
 		timeBuffer.push_back(t);
 		if (timeBuffer.size() > maxBufSize) timeBuffer.pop_front();
 	}
@@ -90,11 +90,11 @@ public:
 	}
 
 private:
-	static unsigned long getTimeMS() {
+	static unsigned long getTime() {
                 std::chrono::time_point<std::chrono::system_clock> now = 
                         std::chrono::system_clock::now();
                 auto duration = now.time_since_epoch();
-                return (unsigned long)std::chrono::duration_cast<std::chrono::milliseconds>(duration).count();
+                return (unsigned long)std::chrono::duration_cast<std::chrono::seconds>(duration).count();
         }
 };
 
