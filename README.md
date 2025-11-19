@@ -102,6 +102,7 @@ directory.
 
 Navigate to the subdir `ds18b20` how to measure real temperature readings.
 
+## Credit
 
 Bernd Porr, mail@berndporr.me.uk
 
