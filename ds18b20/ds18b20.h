@@ -22,15 +22,21 @@ public:
 
 
 /**
- * This class reads data from a fake sensor in the background
- * and calls a callback function whenever data is available.
+ * This class reads at regular intervals the temperature from the DS18B20
+ * and delivers the temperature readings via a callback interface.
  **/
 class DS18B20 : public CppTimer {
 
 public:
 
+    /**
+     * Default constructor
+     **/
     DS18B20() = default;
 
+    /**
+     * Destructor stops acquision
+     **/
     ~DS18B20() {
 	stop();
     }
@@ -42,30 +48,48 @@ public:
 	sensorCallback = cb;
     }
 
+    /**
+     * Starts the data acquision
+     * \param sensorTmperaturePath Abs path to the temperature file of the sensor
+     * \param samplingIntervalSec Sampling interval in seconds
+     **/
     void start(std::string sensorTmperaturePath, int samplingIntervalSec = 10) {
 	dsPath = sensorTmperaturePath;
+	// dummy read to see if it works
+	const float t = readSensor();
+	fprintf(stderr,"Sensor read OK: %3.1fC. Measuring every %dsec.\n",
+		t,samplingIntervalSec);
 	startms(samplingIntervalSec*1000);
     }
 
 private:
     /**
-     * The arrival of data
+     * Reads temperature from the sensor
      **/
-    void timerEvent() {
-	if (nullptr == sensorCallback) return;
+    float readSensor() {
 	FILE* f = fopen(dsPath.c_str(),"rt");
 	if (!f) {
 	    fprintf(stderr,"Could not open %s.\n",dsPath.c_str());
-	    return;
+	    exit(-1);
 	}
 	float value;
 	const int r = fscanf(f,"%f",&value);
+	fclose(f);
 	if (r > 0) {
-	    sensorCallback->hasTemperature(round(value/100.0f)/10.0f);
+	    return value/1000.0f;
 	} else {
 	    fprintf(stderr,"Could not read from %s. Error code: %d.",dsPath.c_str(),r);
+	    exit(-1);
 	}
-	fclose(f);
+    }
+    
+    /**
+     * Timer callback
+     **/
+    void timerEvent() override {
+	if (nullptr == sensorCallback) return;
+	const float temperature = readSensor();
+	sensorCallback->hasTemperature(temperature);
     }
 
 
