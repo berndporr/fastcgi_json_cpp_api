@@ -3,7 +3,7 @@
 ![alt tag](sensor.jpg)
 
 This is a web server plugin for the webserver nginx 
-which provides temperature readings
+which provides temperature readings of the popular DS18B20 sensor
 in JSON format which are then plotted in the browser with the
 javascript dataplotter Dygraphs: https://dygraphs.com/
 
@@ -11,9 +11,9 @@ javascript dataplotter Dygraphs: https://dygraphs.com/
 
 ## Hardware setup
 
-Connect the sensor to GPIO4, 3.3V and GND on the raspberry pi:
+Connect the DS18B20 to GPIO4, 3.3V and GND on the raspberry pi:
 https://pinout.xyz/pinout/1_wire
-You need to use a pullup between GPIO and 3.3 of 1k-4.7k. See photo above.
+You need to use a pullup between the GPIO4 and 3.3V pin of 1k-4.7k. See photo above.
 
 Add to `/boot/firmware/config.txt`:
 
