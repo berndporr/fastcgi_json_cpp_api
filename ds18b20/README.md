@@ -7,7 +7,7 @@ which provides temperature readings
 in JSON format which are then plotted in the browser with the
 javascript dataplotter Dygraphs: https://dygraphs.com/
 
-![alt tag](screenshot.jpg)
+![alt tag](screenshot.png)
 
 ## Hardware setup
 
