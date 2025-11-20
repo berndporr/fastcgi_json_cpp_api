@@ -2,42 +2,33 @@
 <html>
     <head>
 	<title>Welcome to the room temperature server</title>
-	<style>
-	 body {
-             width: 35em;
-             margin: 0 auto;
-             font-family: Tahoma, Verdana, Arial, sans-serif;
-	 }
-	</style>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 	<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/dygraph/2.2.1/dygraph.min.js"></script>
 	<link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/dygraph/2.2.1/dygraph.min.css" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
     </head>
     <body>
-      <h2>Room temperature</h2>
-
-      <h3><b><span id="temperature">00</span>&deg;C</b></h3>
-
-	<div id="div_g" style="width:600px; height:300px;"></div>
-	
-	<script type="text/javascript">
-	  // max samples for dygraph
-	  var maxSamples = 500;
-
-	  // relative path to the sensor data for get/post:
-	  var serverPath = "/sensor/:80";
-	  
-	  // callback when the Web page has been loaded
-	  $(document).ready(function() {
-	      var data = [];
-	      var g = new Dygraph(document.getElementById("div_g"), data,
-				  {
-				      drawPoints: true,
-				      labels: ['Time', 'Temperature'],
-				  });
-
-	      window.intervalId = setInterval(function() {
-		  // callback for interval timer for every second
+      <div class="container">
+	<div class="row">
+	  <div class="col-md-2"></div>
+	  <div class="col-md-8">
+	    <h1>Temperature</h1>
+	    
+	    <h2><b><span id="temperature">00</span>&deg;C</b></h2>
+	    
+	    <div id="div_g" style="width:100%" ></div>
+	    
+	    <script type="text/javascript">
+	      // max samples for dygraph
+	      var maxSamples = 500;
+	      
+	      // relative path to the sensor data for get/post:
+	      var serverPath = "/sensor/:80";
+	      
+	      function refresh(data,g) {
+		// callback for interval timer for every second
 		  $.getJSON(serverPath,function(result){
                       data = [];
 		      y = result.lastvalue;
@@ -47,15 +38,34 @@
 			  var y = result.temperature[i];
 			  data.push([d, y]);
 		      }
-		      g.updateOptions( { 'file': data } );
+		      g.updateOptions( { 'file': data,
+					 'xlabel': 'Time',
+					 'ylabel': 'Temperature',
+					 'resizable': 'both'}
+				     );
 		  });
-	      }, 1000);
-	  });
-	</script>
-	
-	
-	<br />
-	<br />
-<p>Made with <a href="http://dygraphs.com/">dygraphs</p>
+	      }
+	      
+	      // callback when the Web page has been loaded
+	      $(document).ready(function() {
+		  var data = [];
+		  var g = new Dygraph(document.getElementById("div_g"), data,
+				      {
+					  drawPoints: true,
+					  labels: ['Time', 'Temperature'],
+				      });
+		  refresh(data,g);
+		  window.intervalId = setInterval(refresh, 10000, data, g);
+	      });
+	    </script>
+	    
+	    <p><a href="/sensor/">JSON data</a></p>
+	    <br />
+	    <br />
+	    <p>Made with <a href="http://dygraphs.com/">dygraphs</a></p>
+	  </div>
+	  <div class="col-md-2"></div>	  
+	</div>
+      </div>
 </body>
 </html>
