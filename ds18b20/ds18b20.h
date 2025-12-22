@@ -70,7 +70,7 @@ private:
 	FILE* f = fopen(dsPath.c_str(),"rt");
 	if (!f) {
 	    fprintf(stderr,"Could not open %s.\n",dsPath.c_str());
-	    exit(-1);
+	    throw std::invalid_argument("Could not open sensor: "+dsPath);
 	}
 	float value;
 	const int r = fscanf(f,"%f",&value);
@@ -79,7 +79,7 @@ private:
 	    return value/1000.0f;
 	} else {
 	    fprintf(stderr,"Could not read from %s. Error code: %d.",dsPath.c_str(),r);
-	    exit(-1);
+	    throw std::invalid_argument("Could not open sensor: "+dsPath+" err="+std::to_string(r));
 	}
     }
     
@@ -88,8 +88,12 @@ private:
      **/
     void timerEvent() override {
 	if (nullptr == sensorCallback) return;
-	const float temperature = readSensor();
-	sensorCallback->hasTemperature(temperature);
+	try {
+	    const float temperature = readSensor();
+	    sensorCallback->hasTemperature(temperature);
+	} catch (std::invalid_argument e) {
+	    std::cerr << e.what() << std::endl;
+	}
     }
 
 
