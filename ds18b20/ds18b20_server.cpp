@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013-2025
+ * Copyright (c) 2013-2026
   Bernd Porr <mail@berndporr.me.uk>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -10,6 +10,7 @@
 
 #include <string.h>
 #include <unistd.h>
+#include <sys/signalfd.h>
 
 #include "json_fastcgi_web_api.h"
 #include "ds18b20.h"
@@ -18,43 +19,6 @@
 // Constants
 const int temperatureBufferSize = 500;
 const int samplingIntervalSec = 10;
-
-/**
- * Flag to indicate that we are running.
- * Needed later to quit the idle loop.
- **/
-bool mainRunning = true;
-
-/**
- * Handler when the user has pressed ctrl-C
- * send HUP via the kill command.
- **/
-void sigHandler(int sig) { 
-	if((sig == SIGHUP) || (sig == SIGINT)) {
-		mainRunning = false;
-	}
-}
-
-
-/** 
- * Sets a signal handler so that you can kill
- * the background process gracefully with:
- * kill -HUP <PID>
- **/
-void setHUPHandler() {
-	struct sigaction act;
-	memset (&act, 0, sizeof (act));
-	act.sa_handler = sigHandler;
-	if (sigaction (SIGHUP, &act, NULL) < 0) {
-		perror ("sigaction");
-		exit (-1);
-	}
-	if (sigaction (SIGINT, &act, NULL) < 0) {
-		perror ("sigaction");
-		exit (-1);
-	}
-}
-
 
 /**
  * Handler which receives the data here just saves
@@ -182,16 +146,51 @@ int main(int argc, char *argv[]) {
     // starting the data acquisition at the given sampling rate
     sensorcomm.start(argv[1]);
     
-    // catching Ctrl-C or kill -HUP so that we can terminate properly
-    setHUPHandler();
+    int sfd;
+    ssize_t s;
+    sigset_t mask;
+    struct signalfd_siginfo  fdsi;
+
+    sigemptyset(&mask);
+    sigaddset(&mask, SIGINT);
+    sigaddset(&mask, SIGQUIT);
+    sigaddset(&mask, SIGHUP);
+
+    /* Block signals so that they aren't handled
+       according to their default dispositions. */
     
+    if (sigprocmask(SIG_BLOCK, &mask, NULL) == -1) {
+	fprintf(stderr, "sigprocmask error.\n");
+	return -1;
+    }
+    
+    sfd = signalfd(-1, &mask, 0);
+    if (sfd == -1) {
+	fprintf(stderr, "signalfd error.\n");
+	return -1;
+    }
+
+    bool running = true;
     fprintf(stderr,"'%s' up and running.\n",argv[0]);
-    
-    // Just do nothing here and sleep. It's all dealt with in threads!
-    // At this point for example a GUI could be started such as QT
-    // Here, we just wait till the user presses ctrl-c which then
-    // sets mainRunning to zero.
-    while (mainRunning) sleep(1);
+    while (running) {
+	s = read(sfd, &fdsi, sizeof(fdsi));
+	if (s != sizeof(fdsi)) {
+	    fprintf(stderr,"signal event read failure.\n");
+	    running = false;
+	}
+	if (fdsi.ssi_signo == SIGINT) {
+	    printf("Got SIGINT\n");
+	    running = false;
+	} else if (fdsi.ssi_signo == SIGQUIT) {
+	    printf("Got SIGQUIT\n");
+	    running = false;
+	} else if (fdsi.ssi_signo == SIGHUP) {
+	    printf("Got SIGHUP\n");
+	    running = false;
+	} else {
+	    printf("Read unexpected signal\n");
+	}
+    }
     
     fprintf(stderr,"'%s' shutting down.\n",argv[0]);
     
