@@ -44,9 +44,12 @@ The fast cgi server `ds18b20_server` creates a socket under
  ```
  Replace `28-3ce1e380ac02` with your sensor ID. Every sensor has its unique ID.
 
- 2. For production use in the background run, for example:
+ 2. For production use:
  ```
- nohup ./ds18b20_server /sys/bus/w1/devices/28-3ce1e380ac02/temperature &
+ cp ds18b20_server /usr/local/bin
+ cp ds18b20server.service /etc/systemd/system
+ systemctl enable ds18b20server
+ systemctl start ds18b20server.service
  ```
 
 ## Viewing the temperature plot

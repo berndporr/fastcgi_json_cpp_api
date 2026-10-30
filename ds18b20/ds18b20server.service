@@ -1,0 +1,9 @@
+[Unit]
+Description=ds18b20_server
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/ds18b20_server /sys/bus/w1/devices/28-3ce1e380ac02/temperature
+
+[Install]
+WantedBy=multi-user.target
